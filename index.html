@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.T.A.B. SARL — Agroalimentaire & Beurre de Karité du Burkina Faso</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #faf9f5;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        .copper-gradient-text {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 50%, #78350f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .copper-btn-bg {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        }
+
+        .hero-slider-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 8s ease-out;
+            transform: scale(1.08);
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .dark-lux-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b18 100%);
+        }
+
+        .glass-card-dark {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .bg-luxury-cream {
+            background-color: #faf9f5;
+        }
+
+        .bg-luxury-dark {
+            background-color: #0f172a;
+        }
+
+        .copper-glow {
+            box-shadow: 0 10px 30px -10px rgba(180, 83, 9, 0.4);
+        }
+
+        .gold-glow {
+            box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.4);
+        }
+
+        .page-content {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .page-content.active-page {
+            display: block !important;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #d97706, #b45309);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+            border-radius: 99px;
+        }
+        .nav-link:hover::after, .nav-link.active-link::after {
+            width: 80%;
+        }
+
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px -10px rgba(180, 83, 9, 0.15);
+        }
+
+        #cart-drawer, #checkout-modal {
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            visibility: hidden;
+            opacity: 0;
+        }
+        #cart-drawer.open, #checkout-modal.open {
+            visibility: visible;
+            opacity: 1;
+        }
+        #cart-drawer-panel {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #cart-drawer.open #cart-drawer-panel {
+            transform: translateX(0);
+        }
+
+        #toast {
+            transform: translateY(100px) scale(0.95);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+        #toast.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes highlightEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .highlight-item {
+            opacity: 0;
+            animation: highlightEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .highlight-item:nth-child(1) { animation-delay: 0.2s; }
+        .highlight-item:nth-child(2) { animation-delay: 0.6s; }
+        .highlight-item:nth-child(3) { animation-delay: 1.0s; }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.3)); }
+            50% { filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.7)); }
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        .factory-carousel-track {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .factory-slide {
+            min-width: 100%;
+            flex-shrink: 0;
+        }
+
+        .product-card-slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        .product-card-slide {
+            min-width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen overflow-x-hidden">
+
+    <div class="bg-slate-900 text-slate-300 text-[11px] py-2 px-4 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="flex flex-wrap justify-center md:justify-start items-center gap-3 sm:gap-4 text-center md:text-left">
+                <span><i class="fa-solid fa-location-dot text-amber-500 mr-1.5"></i> Bobo-Dioulasso, Secteur 19, Z.I. n°1</span>
+                <span><i class="fa-solid fa-clock text-amber-500 mr-1.5"></i> 8h à 17h</span>
+                <span class="hidden sm:inline"><i class="fa-solid fa-phone text-amber-500 mr-1.5"></i> +226 65 86 10 80 / +226 60 90 59 58</span>
+            </div>
+            <div class="flex items-center gap-3 font-cinzel tracking-wider text-[10px]">
+                <span class="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 truncate max-w-[200px] sm:max-w-none">RCCM: BF BBD 2006 B 862</span>
+                <button onclick="navigateTo('contact')" class="hover:text-white transition underline shrink-0">Contact & Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between min-h-[5rem] py-3 gap-4">
+                
+                <button onclick="navigateTo('accueil')" class="flex items-center gap-2 sm:gap-3 group text-left shrink">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl p-0.5 shadow-sm group-hover:scale-105 transition duration-300 shrink-0 flex items-center justify-center bg-white overflow-hidden border border-slate-200">
+                        <img src="https://i.postimg.cc/D0B0ZWwZ/image.png" alt="Logo S.T.A.B. SARL" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="font-cinzel font-black text-slate-900 text-sm sm:text-base tracking-wide block leading-tight">S.T.A.B. <span class="text-amber-600 font-normal text-xs">SARL</span></span>
+                        <span class="text-[8px] sm:text-[9px] font-cinzel tracking-wider text-slate-500 uppercase block mt-0.5 leading-snug">Société de Transformation Agro-Alimentaire du Burkina</span>
+                    </div>
+                </button>
+
+                <nav class="hidden xl:flex items-center space-x-4 font-cinzel font-bold text-xs uppercase tracking-wider text-slate-700 shrink-0">
+                    <button onclick="navigateTo('accueil')" class="nav-link nav-accueil transition py-2 text-slate-700">Accueil</button>
+                    <button onclick="navigateTo('produits')" class="nav-link nav-produits transition py-2">Boutique & Catalogues</button>
+                    <button onclick="navigateTo('prix-newyork')" class="nav-link nav-prix-newyork transition py-2 flex items-center gap-1.5 text-copper-600">
+                        <i class="fa-solid fa-award text-amber-500"></i> Distinctions & Awards
+                    </button>
+                    <button onclick="navigateTo('etalor')" class="nav-link nav-etalor transition py-2">Karité ETALOR</button>
+                    <button onclick="navigateTo('engagements')" class="nav-link nav-engagements transition py-2 text-emerald-700">Nos 7 Engagements</button>
+                    <button onclick="navigateTo('espace-pro')" class="nav-link nav-espace-pro transition py-2 px-3 rounded-lg bg-copper-50 text-copper-600 border border-copper-200 hover:scale-105 active:scale-95 duration-200">Vente en Gros B2B</button>
+                    <button onclick="navigateTo('contact')" class="nav-link nav-contact transition py-2">Contact</button>
+                </nav>
+
+                <div class="flex items-center space-x-2 shrink-0">
+                    <button onclick="toggleCart()" class="relative p-2.5 sm:p-3 rounded-2xl bg-slate-100 hover:bg-copper-50 text-slate-800 hover:text-copper-600 border border-slate-200 hover:border-copper-300 transition duration-300 group">
+                        <i class="fa-solid fa-bag-shopping text-base"></i>
+                        <span id="cart-count" class="absolute -top-1.5 -right-1.5 copper-btn-bg text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-lg">0</span>
+                    </button>
+
+                    <button onclick="toggleMobileMenu()" class="xl:hidden p-2.5 sm:p-3 rounded-xl bg-slate-100 text-slate-800 border border-slate-200">
+                        <i class="fa-solid fa-bars-staggered text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden xl:hidden border-t border-slate-200 bg-white/95 backdrop-blur-2xl px-6 py-6 space-y-3 font-cinzel font-semibold text-xs uppercase tracking-widest text-slate-800 shadow-xl">
+            <button onclick="navigateTo('accueil'); toggleMobileMenu();" class="block w-full text-left py-2.5 border-b border-slate-100">Accueil</button>
+            <button onclick="navigateTo('produits'); toggleMobileMenu();" class="block w-full text-left py-2.5 border-b border-slate-100 font-bold text-copper-600">Boutique & Catalogues</button>
+            <button onclick="navigateTo('prix-newyork'); toggleMobileMenu();" class="block w-full text-left py-2.5 border-b border-slate-100 text-amber-600 flex items-center gap-2">
+                <i class="fa-solid fa-award"></i> Sommet de la Qualité New York
+            </button>
+            <button onclick="navigateTo('etalor'); toggleMobileMenu();" class="block w-full text-left py-2.5 border-b border-slate-100">Gamme Karité ETALOR</button>
+            <button onclick="navigateTo('engagements'); toggleMobileMenu();" class="block w-full text-left py-2.5 border-b border-slate-100 text-emerald-700">Nos 7 Engagements Qualité</button>
+            <button onclick="navigateTo('espace-pro'); toggleMobileMenu();" class="block w-full text-left py-2.5 border-b border-slate-100 text-copper-600 font-bold">Vente en Gros & Export B2B</button>
+            <button onclick="navigateTo('contact'); toggleMobileMenu();" class="block w-full text-left py-2.5">Siège & Coordonnées</button>
+        </div>
+    </header>
+
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-sm">
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
+            <div id="cart-drawer-panel" class="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between">
+                
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-bag-shopping text-copper-500 text-xl"></i>
+                        <h3 class="font-cinzel font-bold text-sm uppercase tracking-widest">Votre Panier S.T.A.B.</h3>
+                    </div>
+                    <button onclick="toggleCart()" class="text-slate-400 hover:text-white p-2 transition-transform hover:rotate-90">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <div id="cart-items" class="p-6 overflow-y-auto flex-grow space-y-4">
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-xs font-light">Votre panier est vide pour le moment.</p>
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-slate-100 bg-slate-50 space-y-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-cinzel font-bold text-slate-600 uppercase">Sous-total HT :</span>
+                            <span id="cart-total" class="font-cinzel font-bold text-lg text-copper-600">0 FCFA</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 italic">Prix hors taxes. Frais de livraison calculés selon la distance et le volume.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="openCheckoutModal()" class="py-4 bg-emerald-600 text-white font-cinzel font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> Passer la Commande sur WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="fixed inset-0 z-50 overflow-hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 my-auto">
+            <div class="p-3.5 sm:p-4 bg-slate-900 text-white flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-brands fa-whatsapp text-emerald-500 text-lg sm:text-xl"></i>
+                    <h3 class="font-cinzel font-bold text-xs sm:text-sm uppercase tracking-wider">Informations de Livraison WhatsApp</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="processOrder(event)" class="p-4 sm:p-5 flex flex-col overflow-y-auto space-y-3 text-xs">
+                <div>
+                    <label class="block font-cinzel text-slate-700 uppercase font-bold mb-1 text-[11px]">Nom & Prénom *</label>
+                    <input type="text" id="order-name" required placeholder="Votre nom complet..." class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-copper-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-cinzel text-slate-700 uppercase font-bold mb-1 text-[11px]">Téléphone *</label>
+                        <input type="tel" id="order-phone" required placeholder="Ex: 60 90 59 58" class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-copper-500">
+                    </div>
+                    <div>
+                        <label class="block font-cinzel text-slate-700 uppercase font-bold mb-1 text-[11px]">Ville *</label>
+                        <input type="text" id="order-city" required value="Bobo-Dioulasso" class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-copper-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-cinzel text-slate-700 uppercase font-bold mb-1 text-[11px]">Quartier *</label>
+                        <input type="text" id="order-district" required placeholder="Ex: Secteur 19, Sarfalao..." class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-copper-500">
+                    </div>
+                    <div>
+                        <label class="block font-cinzel text-slate-700 uppercase font-bold mb-1 text-[11px]">Adresse / Repère *</label>
+                        <input type="text" id="order-address" required placeholder="Repère précis pour livraison..." class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:border-copper-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-cinzel text-slate-700 uppercase font-bold mb-1.5 text-[11px]">Moyen de Paiement Souhaité *</label>
+                    <div class="grid grid-cols-2 gap-2 text-[10px] sm:text-[11px]">
+                        <label class="p-2 sm:p-2.5 border border-amber-300 rounded-lg bg-amber-50/50 flex items-center gap-2 cursor-pointer font-medium hover:bg-amber-100/50">
+                            <input type="radio" name="payment_method" value="Orange Money" checked class="accent-amber-600">
+                            <span><strong>Orange Money</strong></span>
+                        </label>
+                        <label class="p-2 sm:p-2.5 border border-slate-200 rounded-lg bg-slate-50 flex items-center gap-2 cursor-pointer font-medium hover:bg-slate-100">
+                            <input type="radio" name="payment_method" value="Moov Money" class="accent-amber-600">
+                            <span>Moov Money</span>
+                        </label>
+                        <label class="p-2 sm:p-2.5 border border-slate-200 rounded-lg bg-slate-50 flex items-center gap-2 cursor-pointer font-medium hover:bg-slate-100">
+                            <input type="radio" name="payment_method" value="Espèces à la livraison" class="accent-amber-600">
+                            <span>Espèces livraison</span>
+                        </label>
+                        <label class="p-2 sm:p-2.5 border border-slate-200 rounded-lg bg-slate-50 flex items-center gap-2 cursor-pointer font-medium hover:bg-slate-100">
+                            <input type="radio" name="payment_method" value="Chèque / Virement" class="accent-amber-600">
+                            <span>Chèque / Virement</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[10px] text-amber-900 leading-normal">
+                    <p class="font-bold"><i class="fa-solid fa-circle-info text-amber-600 mr-1"></i> Remarque Livraison & Tarifs :</p>
+                    <p>Les tarifs affichés sont Hors Taxes (HT). Les frais de livraison sont calculés séparément selon la distance et le volume.</p>
+                </div>
+
+                <div class="pt-2 flex flex-col sm:flex-row justify-between items-center gap-2.5 border-t border-slate-100 shrink-0">
+                    <div class="text-center sm:text-left">
+                        <span class="block text-[9px] text-slate-500 uppercase">Montant Produits HT :</span>
+                        <span id="checkout-total-price" class="font-cinzel font-bold text-sm sm:text-base text-copper-600">0 FCFA</span>
+                    </div>
+                    <button type="submit" class="w-full sm:w-auto px-5 py-3 bg-emerald-600 text-white font-cinzel font-bold text-xs uppercase rounded-xl shadow-lg hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i> Envoyer la Commande sur WhatsApp
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl border border-copper-500/50 flex items-center gap-3 text-xs font-medium max-w-xs sm:max-w-md">
+        <i class="fa-solid fa-circle-check text-amber-500 text-lg shrink-0"></i>
+        <span id="toast-message">Produit ajouté au panier avec succès !</span>
+    </div>
+
+    <main class="flex-grow">
+
+        <div id="page-accueil" class="page-content">
+            <section class="relative py-16 sm:py-24 lg:py-32 border-b border-copper-500/20 overflow-hidden min-h-[85vh] flex items-center">
+                
+                <div class="hero-slider-bg">
+                    <div class="hero-slide active" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.92)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000');"></div>
+                    <div class="hero-slide" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.92)), url('https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?auto=format&fit=crop&q=80&w=2000');"></div>
+                    <div class="hero-slide" style="background-image: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.92)), url('https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=2000');"></div>
+                </div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-white">
+                    <div class="max-w-3xl space-y-4 sm:space-y-6">
+                        
+                        <button onclick="navigateTo('prix-newyork')" class="inline-flex items-center gap-3 px-4 sm:px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-amber-400/40 text-amber-300 text-[10px] sm:text-xs font-cinzel font-bold uppercase tracking-widest hover:bg-white/20 transition duration-300 shadow-xl gold-glow text-left">
+                            <i class="fa-solid fa-crown text-amber-400 text-sm shrink-0"></i> <span>International Quality Summit Award — New York USA</span> <i class="fa-solid fa-chevron-right ml-1 text-xs hidden sm:inline"></i>
+                        </button>
+                        
+                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-serif leading-tight sm:leading-tight tracking-normal font-semibold">
+                            S.T.A.B. SARL <br>
+                            <span class="copper-gradient-text italic">L'Excellence Agro-Alimentaire</span>
+                        </h1>
+                        
+                        <p class="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed font-light max-w-2xl">
+                            Fondée en 2006 à Bobo-Dioulasso, la <strong>Société de Transformation Agro-Alimentaire du Burkina</strong> fabrique les huiles de marque <strong>etalor</strong>, les aliments bétail et volaille <strong>bèguè balo</strong>, du tourteau de soja, les céréales maïs coproduits <strong>doulou kafa</strong> (farine, brisure et couscous) ainsi que le <strong>Beurre de Karité ETALOR</strong> (100% naturel & pur).
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 pt-2">
+                            <button onclick="navigateTo('produits')" class="px-7 sm:px-9 py-3.5 sm:py-4 rounded-2xl font-cinzel font-bold text-xs tracking-widest uppercase text-white copper-btn-bg hover:opacity-95 transition shadow-2xl copper-glow text-center">
+                                Boutique & Commander <i class="fa-solid fa-arrow-right-long ml-2"></i>
+                            </button>
+                            <button onclick="navigateTo('espace-pro')" class="px-7 sm:px-9 py-3.5 sm:py-4 rounded-2xl font-cinzel font-bold text-xs tracking-widest uppercase text-white bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white/20 transition text-center">
+                                Vente en Gros & Export B2B
+                            </button>
+                        </div>
+
+                        <div class="pt-8 sm:pt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 border-t border-white/15">
+                            <div class="highlight-item bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-amber-400/40 transition">
+                                <span class="text-xl sm:text-2xl font-cinzel font-bold text-amber-400 block animate-pulse-glow">3 GAMMES MAJEURES</span>
+                                <p class="text-xs text-slate-300 font-light mt-1">Huiles, tourteaux & céréales maïs</p>
+                            </div>
+                            <div class="highlight-item bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-amber-400/40 transition">
+                                <span class="text-xl sm:text-2xl font-cinzel font-bold text-amber-400 block animate-pulse-glow">100% PURE QUALITÉ</span>
+                                <p class="text-xs text-slate-300 font-light mt-1">Karité ETALOR & Produits naturels</p>
+                            </div>
+                            <div class="highlight-item bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-amber-400/40 transition">
+                                <span class="text-xl sm:text-2xl font-cinzel font-bold text-amber-400 block animate-pulse-glow">DEPUIS 2006</span>
+                                <p class="text-xs text-slate-300 font-light mt-1">Bobo Z.I. n°1, Secteur 19</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-12 bg-slate-900 text-white border-b border-amber-500/20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                            <span class="text-3xl sm:text-4xl font-cinzel font-bold text-amber-400 block">+20 Ans</span>
+                            <span class="text-xs text-slate-300 uppercase tracking-widest font-cinzel mt-1 block">D'Excellence Agro-Alimentaire</span>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                            <span class="text-3xl sm:text-4xl font-cinzel font-bold text-amber-400 block">100%</span>
+                            <span class="text-xs text-slate-300 uppercase tracking-widest font-cinzel mt-1 block">Naturel & Origine Burkina</span>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                            <span class="text-3xl sm:text-4xl font-cinzel font-bold text-amber-400 block">3 Prix</span>
+                            <span class="text-xs text-slate-300 uppercase tracking-widest font-cinzel mt-1 block">Internationaux & Nationaux</span>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                            <span class="text-3xl sm:text-4xl font-cinzel font-bold text-amber-400 block">B2B & B2C</span>
+                            <span class="text-xs text-slate-300 uppercase tracking-widest font-cinzel mt-1 block">Vente au Détail & Gros 25kg</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 bg-white border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="p-8 rounded-3xl bg-amber-50/60 border border-amber-200/80 hover:shadow-md transition">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl mb-6 shadow-sm">
+                                <i class="fa-solid fa-bullseye"></i>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold text-slate-900 mb-3">Notre Mission</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                Valoriser les ressources naturelles du territoire burkinabè en transformant avec soin des amandes de karité sélectionnées et des matières premières locales, afin d'offrir des produits 100% naturels, purs et de qualité supérieure pour le bien-être et la beauté de toute la famille.
+                            </p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 hover:shadow-md transition">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-900 flex items-center justify-center text-xl mb-6 shadow-sm">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold text-amber-300 mb-3">Notre Vision</h3>
+                            <p class="text-slate-300 text-xs leading-relaxed font-light">
+                                Devenir la référence agro-alimentaire locale et durable qui « nourrit le présent et préserve l'avenir » (<strong>« Valoriser nos richesses, nourrir demain »</strong>), en rendant les bienfaits de la nature accessibles à tous.
+                            </p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-emerald-50/60 border border-emerald-200/80 hover:shadow-md transition">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl mb-6 shadow-sm">
+                                <i class="fa-solid fa-gem"></i>
+                            </div>
+                            <h3 class="font-serif text-xl font-bold text-slate-900 mb-3">Nos Valeurs</h3>
+                            <ul class="text-slate-600 text-xs space-y-2 font-light">
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-600 mt-0.5"></i>
+                                    <span><strong>Authenticité :</strong> Produits 100% naturels, purs et fidèles au territoire.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-600 mt-0.5"></i>
+                                    <span><strong>Qualité & Excellence :</strong> Normes strictes et transformation irréprochable.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fa-solid fa-check text-emerald-600 mt-0.5"></i>
+                                    <span><strong>Proximité :</strong> Bien-être quotidien de toute la famille.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 bg-slate-50 border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <span class="text-copper-600 font-cinzel font-bold text-xs uppercase tracking-widest">Savoir-Faire & Transparence</span>
+                        <h2 class="text-3xl font-serif text-slate-900 font-bold mt-2">Notre Processus de Transformation</h2>
+                        <div class="w-16 h-1 copper-btn-bg mx-auto mt-3 rounded-full"></div>
+                        <p class="text-slate-600 text-xs font-light mt-3">De la collecte locale des matières premières jusqu'à la livraison chez vous.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 text-center relative group hover:shadow-lg transition">
+                            <div class="w-12 h-12 rounded-2xl copper-btn-bg text-white font-cinzel font-bold text-lg flex items-center justify-center mx-auto mb-4 shadow-md">1</div>
+                            <h4 class="font-serif font-bold text-slate-900 text-sm mb-2">Sélection des Amandes</h4>
+                            <p class="text-slate-600 text-xs font-light">Collecte rigoureuse d'amandes de karité et céréales de première qualité au Burkina Faso.</p>
+                        </div>
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 text-center relative group hover:shadow-lg transition">
+                            <div class="w-12 h-12 rounded-2xl copper-btn-bg text-white font-cinzel font-bold text-lg flex items-center justify-center mx-auto mb-4 shadow-md">2</div>
+                            <h4 class="font-serif font-bold text-slate-900 text-sm mb-2">Extraction & Transformation</h4>
+                            <p class="text-slate-600 text-xs font-light">Raffinage et extraction hygiénique sur notre site industriel de Bobo-Dioulasso Z.I. n°1.</p>
+                        </div>
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 text-center relative group hover:shadow-lg transition">
+                            <div class="w-12 h-12 rounded-2xl copper-btn-bg text-white font-cinzel font-bold text-lg flex items-center justify-center mx-auto mb-4 shadow-md">3</div>
+                            <h4 class="font-serif font-bold text-slate-900 text-sm mb-2">Contrôle Qualité IRSAT</h4>
+                            <p class="text-slate-600 text-xs font-light">Analyses en laboratoire et conformité sanitaire strictes selon les normes BPH et ONUDI.</p>
+                        </div>
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 text-center relative group hover:shadow-lg transition">
+                            <div class="w-12 h-12 rounded-2xl copper-btn-bg text-white font-cinzel font-bold text-lg flex items-center justify-center mx-auto mb-4 shadow-md">4</div>
+                            <h4 class="font-serif font-bold text-slate-900 text-sm mb-2">Distribution & Export</h4>
+                            <p class="text-slate-600 text-xs font-light">Conditionnement hermétique (1kg, 25kg, bidons, sacs) et expédition nationale et internationale.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 sm:py-20 bg-luxury-cream">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm text-center hover:shadow-md transition">
+                            <i class="fa-solid fa-bottle-droplet text-3xl sm:text-4xl text-amber-500 mb-4"></i>
+                            <h3 class="font-serif text-lg sm:text-xl font-bold mb-2">Huiles & Karité ETALOR</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">Huiles de table raffinées et beurre de karité pur ETALOR (disponible au kilo et en gros 25kg). Un trésor de notre territoire.</p>
+                            <button onclick="navigateTo('etalor')" class="text-copper-600 font-cinzel text-xs font-bold uppercase tracking-wider hover:underline">Découvrir le Karité ETALOR &rarr;</button>
+                        </div>
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm text-center hover:shadow-md transition">
+                            <i class="fa-solid fa-wheat-awn text-3xl sm:text-4xl text-copper-500 mb-4"></i>
+                            <h3 class="font-serif text-lg sm:text-xl font-bold mb-2">Céréales doulou kafa</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed mb-6">Produits dérivés du maïs coproduit : Farine (blanc et jaune), Brisure (blanc et jaune) et Couscous de maïs à 700f/kg.</p>
+                            <button onclick="navigateTo('produits')" class="text-copper-600 font-cinzel text-xs font-bold uppercase tracking-wider hover:underline">Voir les Céréales &rarr;</button>
+                        </div>
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm text-center hover:shadow-md transition">
+                            <i class="fa-solid fa-cow text-3xl sm:text-4xl text-emerald-600 mb-4"></i>
+                            <h3 class="font-serif text-lg sm:text-xl font-bold mb-2">Tourteaux bèguè balo</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed mb-6">Aliments de haute qualité pour bétail et volaille (bèguè balo) ainsi que le tourteau de soja spécifique.</p>
+                            <button onclick="navigateTo('produits')" class="text-copper-600 font-cinzel text-xs font-bold uppercase tracking-wider hover:underline">Espace Nutrition Animale &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 bg-white border-t border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <span class="text-emerald-700 font-cinzel font-bold text-xs uppercase tracking-widest">Retours d'Expérience</span>
+                        <h2 class="text-3xl font-serif text-slate-900 font-bold mt-2">Ils nous font confiance</h2>
+                        <div class="w-16 h-1 bg-emerald-600 mx-auto mt-3 rounded-full"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-xs">
+                            <div class="flex items-center text-amber-400 text-xs mb-3">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-600 text-xs italic font-light leading-relaxed mb-4">
+                                « Les tourteaux bèguè balo ont nettement amélioré le rendement de nos élevages. La qualité est toujours égale d'une livraison à l'autre. »
+                            </p>
+                            <div class="flex items-center gap-3 pt-3 border-t border-slate-200/80">
+                                <div class="w-9 h-9 rounded-full bg-amber-500/20 text-amber-700 font-bold font-cinzel flex items-center justify-center text-xs">O.S.</div>
+                                <div>
+                                    <span class="font-cinzel font-bold text-xs text-slate-900 block">Ousmane S.</span>
+                                    <span class="text-[10px] text-slate-500">Coopérative d'Élevage, Hauts-Bassins</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-xs">
+                            <div class="flex items-center text-amber-400 text-xs mb-3">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-600 text-xs italic font-light leading-relaxed mb-4">
+                                « Le beurre de karité ETALOR en cartons de 25kg est d'une pureté exceptionnelle. Nos clients internationaux l'adorent pour ses propriétés apaisantes. »
+                            </p>
+                            <div class="flex items-center gap-3 pt-3 border-t border-slate-200/80">
+                                <div class="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-700 font-bold font-cinzel flex items-center justify-center text-xs">A.K.</div>
+                                <div>
+                                    <span class="font-cinzel font-bold text-xs text-slate-900 block">Aminata K.</span>
+                                    <span class="text-[10px] text-slate-500">Grossiste Cosmétique B2B</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-xs">
+                            <div class="flex items-center text-amber-400 text-xs mb-3">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="text-slate-600 text-xs italic font-light leading-relaxed mb-4">
+                                « La brisure et farine de maïs doulou kafa à 700f/kg sont d'une régularité remarquable. Commande WhatsApp rapide et livraison impeccable à Bobo. »
+                            </p>
+                            <div class="flex items-center gap-3 pt-3 border-t border-slate-200/80">
+                                <div class="w-9 h-9 rounded-full bg-copper-500/20 text-copper-700 font-bold font-cinzel flex items-center justify-center text-xs">M.T.</div>
+                                <div>
+                                    <span class="font-cinzel font-bold text-xs text-slate-900 block">Mariam T.</span>
+                                    <span class="text-[10px] text-slate-500">Commerçante de Céréales</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-14 dark-lux-bg text-white border-y border-amber-500/30">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="text-center md:text-left max-w-2xl">
+                        <span class="text-amber-400 font-cinzel font-bold text-xs uppercase tracking-widest block mb-1">Partenariat B2B & Exportation</span>
+                        <h3 class="text-2xl sm:text-3xl font-serif font-bold text-white">Besoin d'un Approvisionnement en Gros Volumineux ?</h3>
+                        <p class="text-slate-300 text-xs font-light mt-2">Profitez de nos tarifs directs usine pour les cartons de Beurre Karité 25kg, conteneurs d'huiles et tonnes de tourteaux.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3 shrink-0">
+                        <button onclick="navigateTo('espace-pro')" class="px-6 py-3.5 copper-btn-bg text-white font-cinzel font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg hover:opacity-90 transition">
+                            <i class="fa-solid fa-file-invoice mr-1.5"></i> Demander un Devis Gros
+                        </button>
+                        <button onclick="openCheckoutModal()" class="px-6 py-3.5 bg-emerald-600 text-white font-cinzel font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg hover:bg-emerald-700 transition">
+                            <i class="fa-brands fa-whatsapp mr-1.5"></i> Échanger sur WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-16 bg-luxury-cream">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-10">
+                        <span class="text-copper-600 font-cinzel font-bold text-xs uppercase tracking-widest">Questions Fréquentes</span>
+                        <h2 class="text-3xl font-serif text-slate-900 font-bold mt-1">Foire Aux Questions</h2>
+                        <p class="text-slate-600 text-xs font-light mt-2">Tout ce que vous devez savoir avant de passer commande chez S.T.A.B. SARL.</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <details class="p-4 rounded-2xl bg-white border border-slate-200 group">
+                            <summary class="font-cinzel font-bold text-slate-900 cursor-pointer flex justify-between items-center">
+                                <span>Où est située l'usine STAB et comment effectuer un retrait ?</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition"></i>
+                            </summary>
+                            <p class="text-slate-600 font-light mt-3 leading-relaxed border-t border-slate-100 pt-3">
+                                Notre usine et siège social sont situés à <strong>Bobo-Dioulasso, Secteur 19, Zone Industrielle n°1</strong>. Le retrait sur place est ouvert du lundi au samedi de 8h00 à 16h00.
+                            </p>
+                        </details>
+
+                        <details class="p-4 rounded-2xl bg-white border border-slate-200 group">
+                            <summary class="font-cinzel font-bold text-slate-900 cursor-pointer flex justify-between items-center">
+                                <span>Quels sont les conditionnements du Beurre de Karité ETALOR ?</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition"></i>
+                            </summary>
+                            <p class="text-slate-600 font-light mt-3 leading-relaxed border-t border-slate-100 pt-3">
+                                Le beurre de karité ETALOR est conditionné en pots hermétiques de <strong>1 kg</strong> pour les particuliers et en fûts/cartons de <strong>25 kg</strong> pour les grossistes, industriels et l'exportation.
+                            </p>
+                        </details>
+
+                        <details class="p-4 rounded-2xl bg-white border border-slate-200 group">
+                            <summary class="font-cinzel font-bold text-slate-900 cursor-pointer flex justify-between items-center">
+                                <span>Expédiez-vous les produits dans les autres villes et à l'international ?</span>
+                                <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition"></i>
+                            </summary>
+                            <p class="text-slate-600 font-light mt-3 leading-relaxed border-t border-slate-100 pt-3">
+                                Oui, nous livrons partout au Burkina Faso (Ouagadougou, Koudougou, Banfora, etc.) ainsi qu'à l'exportation (sous-région UEMOA et international) grâce à notre service B2B dédié.
+                            </p>
+                        </details>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="page-produits" class="page-content hidden">
+            <section class="py-20 bg-luxury-cream min-h-screen">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <div class="text-center max-w-3xl mx-auto mb-10">
+                        <span class="text-copper-600 font-cinzel font-bold uppercase tracking-widest text-xs">Catalogue Officiel S.T.A.B. SARL</span>
+                        <h2 class="text-4xl sm:text-5xl font-serif text-slate-900 mt-2 font-normal">Nos Produits & Gammes Complètes</h2>
+                        <div class="w-20 h-1 copper-btn-bg mx-auto mt-4 rounded-full"></div>
+                        <p class="text-slate-600 text-xs sm:text-sm font-light mt-4">Découvrez nos produits avec des aperçus visuels défilants pour chaque catégorie : Huiles etalor, Tourteaux, Céréales Maïs Doulou Kafa et Beurre de Karité ETALOR.</p>
+                    </div>
+
+                    <div class="max-w-xl mx-auto mb-10">
+                        <div class="relative flex items-center">
+                            <div class="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                                <i class="fa-solid fa-magnifying-glass text-amber-600 text-sm"></i>
+                                <span class="h-4 w-[1px] bg-slate-200 hidden sm:inline-block"></span>
+                            </div>
+                            <input type="text" id="product-search" oninput="searchProducts()" placeholder="Rechercher huiles etalor, bèguè balo, doulou kafa, karité..." class="w-full pl-11 sm:pl-12 pr-12 py-3.5 rounded-2xl border border-slate-300 bg-white shadow-sm text-xs focus:outline-none focus:border-copper-500 transition">
+                            <button onclick="searchProducts()" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl copper-btn-bg text-white flex items-center justify-center text-xs hover:opacity-90 transition">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-2 mb-12 text-xs font-cinzel font-bold tracking-widest uppercase">
+                        <button onclick="filterProducts('all')" class="filter-btn active px-5 py-2.5 rounded-xl copper-btn-bg text-white shadow-md">Tous les Produits</button>
+                        <button onclick="filterProducts('huiles')" class="filter-btn px-5 py-2.5 rounded-xl bg-white text-slate-700 hover:text-copper-600 border border-slate-200 shadow-sm">Huiles (etalor)</button>
+                        <button onclick="filterProducts('tourteaux')" class="filter-btn px-5 py-2.5 rounded-xl bg-white text-slate-700 hover:text-copper-600 border border-slate-200 shadow-sm">Tourteaux (bèguè balo & Soja)</button>
+                        <button onclick="filterProducts('cereales')" class="filter-btn px-5 py-2.5 rounded-xl bg-white text-slate-700 hover:text-copper-600 border border-slate-200 shadow-sm">Céréales Maïs (doulou kafa)</button>
+                        <button onclick="filterProducts('karite')" class="filter-btn px-5 py-2.5 rounded-xl bg-white text-slate-700 hover:text-copper-600 border border-slate-200 shadow-sm">Beurre de Karité ETALOR</button>
+                    </div>
+
+                    <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <div class="product-card huiles rounded-3xl bg-white border border-slate-200 shadow-md overflow-hidden hover:border-copper-400 hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                            <div class="p-6">
+                                <div class="w-full h-60 rounded-2xl overflow-hidden relative mb-6 border border-slate-100 shadow-inner">
+                                    <div id="slider-huiles" class="product-card-slider">
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/photo-" class="w-full h-full object-cover" alt="Huile etalor bidon"></div>
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/photo-" class="w-full h-full object-cover" alt="Huile de table etalor"></div>
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/photo-" class="w-full h-full object-cover" alt="Raffinage d'huile usine STAB"></div>
+                                    </div>
+                                    <button onclick="moveProductSlide('slider-huiles', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button onclick="moveProductSlide('slider-huiles', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button onclick="toggleWishlist('Huile Raffinée etalor')" class="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow hover:text-red-500 text-slate-600 transition z-10">
+                                        <i class="fa-regular fa-heart text-xs"></i>
+                                    </button>
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-xs px-2 py-0.5 rounded-full text-[9px] text-white">3 visuels</div>
+                                </div>
+
+                                <span class="text-[10px] font-cinzel font-bold tracking-widest text-copper-600 uppercase">Gamme 1 : Huiles de Table</span>
+                                <h3 class="text-xl font-serif font-bold text-slate-900 mt-1">Huile Raffinée Marque etalor</h3>
+                                <p class="text-slate-500 text-xs font-light mt-2 leading-relaxed">Huile végétale raffinée d'une pureté exceptionnelle, extraite et emballée à l'usine STAB de Bobo-Dioulasso.</p>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-100">
+                                    <label class="block text-[10px] font-cinzel uppercase text-slate-500 mb-2">Choisir le Format :</label>
+                                    <select id="size-etalor" class="w-full text-xs p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium focus:outline-none focus:border-copper-500">
+                                        <option value="1 Litre" data-price="1200">Bidon de 1 Litre — 1 200 FCFA HT</option>
+                                        <option value="5 Litres" data-price="5500">Bidon de 5 Litres — 5 500 FCFA HT</option>
+                                        <option value="20 Litres" data-price="21000">Bidon de 20 Litres — 21 000 FCFA HT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[9px] font-cinzel uppercase text-slate-500 block">À partir de (HT)</span>
+                                    <span class="text-lg font-cinzel font-bold text-copper-600">1 200 FCFA</span>
+                                </div>
+                                <button onclick="addSelectedProduct('Huile etalor', 'size-etalor')" class="px-5 py-3 copper-btn-bg text-white text-xs font-cinzel font-bold uppercase rounded-xl shadow-md hover:opacity-90 transition">
+                                    <i class="fa-solid fa-cart-plus mr-1"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card tourteaux rounded-3xl bg-white border border-slate-200 shadow-md overflow-hidden hover:border-copper-400 hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                            <div class="p-6">
+                                <div class="w-full h-60 rounded-2xl overflow-hidden relative mb-6 border border-slate-100 shadow-inner">
+                                    <div id="slider-tourteaux" class="product-card-slider">
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/" class="w-full h-full object-cover" alt="Tourteau bèguè balo aliment bétail"></div>
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/" class="w-full h-full object-cover" alt="Aliment pour élevage volaille et bétail"></div>
+                                    </div>
+                                    <button onclick="moveProductSlide('slider-tourteaux', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button onclick="moveProductSlide('slider-tourteaux', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button onclick="toggleWishlist('Tourteaux bèguè balo')" class="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow hover:text-red-500 text-slate-600 transition z-10">
+                                        <i class="fa-regular fa-heart text-xs"></i>
+                                    </button>
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-xs px-2 py-0.5 rounded-full text-[9px] text-white">2 visuels</div>
+                                </div>
+
+                                <span class="text-[10px] font-cinzel font-bold tracking-widest text-copper-600 uppercase">Gamme 2 : Alimentation Animale</span>
+                                <h3 class="text-xl font-serif font-bold text-slate-900 mt-1">Tourteau bèguè balo</h3>
+                                <p class="text-slate-500 text-xs font-light mt-2 leading-relaxed">Aliment haute performance nutritionnelle pour bétail et volaille sous la marque officielle bèguè balo.</p>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-100">
+                                    <label class="block text-[10px] font-cinzel uppercase text-slate-500 mb-2">Choisir l'Aliment :</label>
+                                    <select id="size-bague-balo" class="w-full text-xs p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium focus:outline-none focus:border-copper-500">
+                                        <option value="Sac 50kg Bétail" data-price="12500">Aliment Bétail bèguè balo (50 kg) — 12 500 FCFA HT</option>
+                                        <option value="Sac 50kg Volaille" data-price="13000">Aliment Volaille bèguè balo (50 kg) — 13 000 FCFA HT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[9px] font-cinzel uppercase text-slate-500 block">Prix Sac (HT)</span>
+                                    <span class="text-lg font-cinzel font-bold text-copper-600">12 500 FCFA</span>
+                                </div>
+                                <button onclick="addSelectedProduct('Tourteau bèguè balo', 'size-bague-balo')" class="px-5 py-3 copper-btn-bg text-white text-xs font-cinzel font-bold uppercase rounded-xl shadow-md hover:opacity-90 transition">
+                                    <i class="fa-solid fa-cart-plus mr-1"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card tourteaux rounded-3xl bg-white border border-slate-200 shadow-md overflow-hidden hover:border-copper-400 hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                            <div class="p-6">
+                                <div class="w-full h-60 rounded-2xl overflow-hidden relative mb-6 border border-slate-100 shadow-inner">
+                                    <div id="slider-soja" class="product-card-slider">
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/p0" class="w-full h-full object-cover" alt="Tourteau de soja protéiné"></div>
+                                        <div class="product-card-slide"><img src="https://images.unsplash.com/p" class="w-full h-full object-cover" alt="Graines et tourteau de soja usine"></div>
+                                    </div>
+                                    <button onclick="moveProductSlide('slider-soja', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button onclick="moveProductSlide('slider-soja', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button onclick="toggleWishlist('Tourteau de Soja')" class="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow hover:text-red-500 text-slate-600 transition z-10">
+                                        <i class="fa-regular fa-heart text-xs"></i>
+                                    </button>
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-xs px-2 py-0.5 rounded-full text-[9px] text-white">2 visuels</div>
+                                </div>
+
+                                <span class="text-[10px] font-cinzel font-bold tracking-widest text-copper-600 uppercase">Tourteau Spécifique</span>
+                                <h3 class="text-xl font-serif font-bold text-slate-900 mt-1">Tourteau de Soja Pur</h3>
+                                <p class="text-slate-500 text-xs font-light mt-2 leading-relaxed">Substance à très forte concentration protéique, indispensable pour la croissance des animaux d'élevage.</p>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-100">
+                                    <label class="block text-[10px] font-cinzel uppercase text-slate-500 mb-2">Quantité :</label>
+                                    <select id="size-soja" class="w-full text-xs p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium focus:outline-none focus:border-copper-500">
+                                        <option value="Sac 50kg" data-price="16000">Sac de 50 kg — 16 000 FCFA HT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[9px] font-cinzel uppercase text-slate-500 block">Prix Sac (HT)</span>
+                                    <span class="text-lg font-cinzel font-bold text-copper-600">16 000 FCFA</span>
+                                </div>
+                                <button onclick="addSelectedProduct('Tourteau de Soja', 'size-soja')" class="px-5 py-3 copper-btn-bg text-white text-xs font-cinzel font-bold uppercase rounded-xl shadow-md hover:opacity-90 transition">
+                                    <i class="fa-solid fa-cart-plus mr-1"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card cereales rounded-3xl bg-white border border-slate-200 shadow-md overflow-hidden hover:border-copper-400 hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                            <div class="p-6">
+                                <div class="w-full h-60 rounded-2xl overflow-hidden relative mb-6 border border-slate-100 shadow-inner">
+                                    <div id="slider-doulou-kafa" class="product-card-slider">
+                                        <div class="product-card-slide relative">
+                                            <img src="https://i.postimg.cc/vB3chQ46/Doumou-Kafa-Maize-Flour-Bag-(1).png" class="w-full h-full object-cover" alt="Farine de maïs blanc doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">1/7. Farine Maïs Blanc</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://images.unsplash.com/photo-1" class="w-full h-full object-cover" alt="Farine de maïs jaune doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">2/7. Farine Maïs Jaune</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://i.postimg.cc/85tj417v/Doumou-Kafa-Yellow-Corn-Couscous-(1).png" class="w-full h-full object-cover" alt="Brisure de maïs blanc doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">3/7. Brisure Maïs Blanc</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://i.postimg.cc/50n6gxXv/Do-umou-Kafa-Corn-Grits-Package.png" class="w-full h-full object-cover" alt="Brisure de maïs jaune doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">4/7. Brisure Maïs Jaune (Grainé)</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://i.postimg.cc/50n6gxXv/Do-umou-Kafa-Corn-Grits-Package.png" class="w-full h-full object-cover" alt="Brisure de maïs jaune doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">4/7. Brisure Maïs Jaune</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://images.unsplash.com/-0" class="w-full h-full object-cover" alt="Couscous de maïs blanc doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">5/7. Couscous Maïs Blanc</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://i.postimg.cc/85tj417v/Doumou-Kafa-Yellow-Corn-Couscous-(1).png" class="w-full h-full object-cover" alt="Couscous de maïs jaune doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">6/7. Couscous Maïs Jaune</span>
+                                        </div>
+                                        <div class="product-card-slide relative">
+                                            <img src="https://images.unsplash.com/" class="w-full h-full object-cover" alt="Conditionnement sacs céréales doulou kafa">
+                                            <span class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-cinzel">7/7. Conditionnement Usine</span>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="moveProductSlide('slider-doulou-kafa', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-900 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs opacity-90 transition z-10"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button onclick="moveProductSlide('slider-doulou-kafa', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-900 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs opacity-90 transition z-10"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button onclick="toggleWishlist('Céréales maïs doulou kafa')" class="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow hover:text-red-500 text-slate-600 transition z-10">
+                                        <i class="fa-regular fa-heart text-xs"></i>
+                                    </button>
+                                </div>
+
+                                <span class="text-[10px] font-cinzel font-bold tracking-widest text-copper-600 uppercase">Gamme 3 : Céréales Maïs Coproduit</span>
+                                <h3 class="text-xl font-serif font-bold text-slate-900 mt-1">Céréales Maïs doulou kafa</h3>
+                                <p class="text-slate-500 text-xs font-light mt-2 leading-relaxed">Faites défiler le carrousel d'images ci-dessus pour observer les 7 déclinaisons de maïs (Farines, Brisures et Couscous blanc & jaune).</p>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-100">
+                                    <label class="block text-[10px] font-cinzel uppercase text-slate-500 mb-2">Choisir parmi les 6 Variétés (700f / kg) :</label>
+                                    <select id="size-doulou-kafa" class="w-full text-xs p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium focus:outline-none focus:border-copper-500">
+                                        <option value="Farine Blanc 1kg" data-price="700">1. Farine de Maïs Blanc (1kg) — 700 FCFA HT</option>
+                                        <option value="Farine Jaune 1kg" data-price="700">2. Farine de Maïs Jaune (1kg) — 700 FCFA HT</option>
+                                        <option value="Brisure Blanc 1kg" data-price="700">3. Brisure de Maïs Blanc (1kg) — 700 FCFA HT</option>
+                                        <option value="Brisure Jaune 1kg" data-price="700">4. Brisure de Maïs Jaune (1kg) — 700 FCFA HT</option>
+                                        <option value="Couscous Blanc 1kg" data-price="700">5. Couscous de Maïs Blanc (1kg) — 700 FCFA HT</option>
+                                        <option value="Couscous Jaune 1kg" data-price="700">6. Couscous de Maïs Jaune (1kg) — 700 FCFA HT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[9px] font-cinzel uppercase text-slate-500 block">Prix Fixe (HT)</span>
+                                    <span class="text-lg font-cinzel font-bold text-copper-600">700 FCFA / kg</span>
+                                </div>
+                                <button onclick="addSelectedProduct('Céréales doulou kafa', 'size-doulou-kafa')" class="px-5 py-3 copper-btn-bg text-white text-xs font-cinzel font-bold uppercase rounded-xl shadow-md hover:opacity-90 transition">
+                                    <i class="fa-solid fa-cart-plus mr-1"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card karite rounded-3xl bg-white border border-slate-200 shadow-md overflow-hidden hover:border-copper-400 hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                            <div class="p-6">
+                                <div class="w-full h-60 rounded-2xl overflow-hidden relative mb-6 border border-slate-100 shadow-inner">
+                                    <div id="slider-karite" class="product-card-slider">
+                                        <div class="product-card-slide"><img src="https://i.postimg.cc/DZKfVZWw/Whats-App-Image-2026-10-28-at-6-59-18-PM.jpg" class="w-full h-full object-cover" alt="Beurre de Karité ETALOR pot"></div>
+                                        <div class="product-card-slide"><img src="https://i.postimg.cc/RFXNdMWK/Beurre-de-karite-emballe-dans-un-carton.png " class="w-full h-full object-cover" alt="Amandes de karité pures"></div>
+                                        <div class="product-card-slide"><img src="https://i.postimg.cc/pdCcvcrh/image.png" class="w-full h-full object-cover" alt="Soins au beurre de karité ETALOR"></div>
+                                    </div>
+                                    <button onclick="moveProductSlide('slider-karite', -1)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <button onclick="moveProductSlide('slider-karite', 1)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900 text-white w-7 h-7 rounded-full flex items-center justify-center text-xs opacity-80 hover:opacity-100 transition z-10"><i class="fa-solid fa-chevron-right"></i></button>
+                                    <button onclick="toggleWishlist('Beurre de Karité ETALOR')" class="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow hover:text-red-500 text-slate-600 transition z-10">
+                                        <i class="fa-regular fa-heart text-xs"></i>
+                                    </button>
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-xs px-2 py-0.5 rounded-full text-[9px] text-white">3 visuels</div>
+                                </div>
+
+                                <span class="text-[10px] font-cinzel font-bold tracking-widest text-copper-600 uppercase">Transformation Karité</span>
+                                <h3 class="text-xl font-serif font-bold text-slate-900 mt-1">Beurre de Karité ETALOR</h3>
+                                <p class="text-slate-500 text-xs font-light mt-2 leading-relaxed">Produit 100% naturel, nourrit en profondeur, répare la peau et revitalise les cheveux. Disponible au détail (1kg) et en gros (25kg).</p>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-100">
+                                    <label class="block text-[10px] font-cinzel uppercase text-slate-500 mb-2">Choisir le Conditioning :</label>
+                                    <select id="size-karite-pot" class="w-full text-xs p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium focus:outline-none focus:border-copper-500">
+                                        <option value="1kg" data-price="2000">Beurre de karité 1kg — 2 000 FCFA HT</option>
+                                        <option value="Vente en gros 25kg" data-price="45000">Beurre de karité 25kg (Vente en gros) — Sur Devis / 45 000 FCFA HT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[9px] font-cinzel uppercase text-slate-500 block">À partir de (HT)</span>
+                                    <span class="text-lg font-cinzel font-bold text-copper-600">2 000 FCFA</span>
+                                </div>
+                                <button onclick="addSelectedProduct('Beurre de Karité ETALOR', 'size-karite-pot')" class="px-5 py-3 copper-btn-bg text-white text-xs font-cinzel font-bold uppercase rounded-xl shadow-md hover:opacity-90 transition">
+                                    <i class="fa-solid fa-cart-plus mr-1"></i> Ajouter
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="page-engagements" class="page-content hidden">
+            <section class="py-20 bg-white min-h-screen">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <span class="text-emerald-700 font-cinzel font-bold uppercase tracking-widest text-xs">Pourquoi Choisir S.T.A.B. SARL ?</span>
+                        <h2 class="text-4xl sm:text-5xl font-serif text-slate-900 mt-2 font-normal">Nos 7 Engagements Qualité</h2>
+                        <div class="w-20 h-1 bg-emerald-600 mx-auto mt-4 rounded-full"></div>
+                        <p class="text-slate-600 text-xs sm:text-sm font-light mt-4">Un partenariat basé sur la confiance totale, la régularité et la transformation locale maîtrisée.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-cinzel font-bold text-xl flex items-center justify-center mb-6">1</div>
+                            <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">Transformation Locale Maîtrisée</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">Une chaîne industrielle intégrée à Bobo-Dioulasso garantissant une traçabilité parfaite de nos huiles etalor et céréales doulou kafa.</p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-cinzel font-bold text-xl flex items-center justify-center mb-6">2</div>
+                            <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">Proximité avec les Clients</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">Un service commercial réactif couvrant toute la région du Guiriko et la majeure partie du Burkina Faso.</p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-cinzel font-bold text-xl flex items-center justify-center mb-6">3</div>
+                            <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">Fraîcheur & Qualité Constante</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">Des contrôles de laboratoires rigoureux pour maintenir la qualité de nos aliments bèguè balo et de notre tourteau de soja.</p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-cinzel font-bold text-xl flex items-center justify-center mb-6">4</div>
+                            <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">Prix Direct Usine Compétitifs</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">Des tarifs accessibles (ex: maïs doulou kafa à 700f/kg, karité 1kg à 2 000f) adaptés aux ménages, éleveurs et revendeurs.</p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-cinzel font-bold text-xl flex items-center justify-center mb-6">5</div>
+                            <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">Disponibilité Permanente</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">Capacités de production en continu pour garantir l'approvisionnement des grossistes et usines d'élevage.</p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition duration-300">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-cinzel font-bold text-xl flex items-center justify-center mb-6">6</div>
+                            <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">Conformité Contractuelle Stricte</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed font-light">Respect rigoureux des volumes, poids et critères de qualité convenus lors de chaque commande.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 p-8 rounded-3xl bg-emerald-900 text-white text-center flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="text-left max-w-xl">
+                            <span class="text-amber-400 font-cinzel font-bold text-xs uppercase tracking-wider">7. Notre Engagement Ultime</span>
+                            <h3 class="text-2xl font-serif font-bold mt-1">Un Partenariat Basé sur la Confiance</h3>
+                            <p class="text-slate-300 text-xs mt-2 font-light">Chaque client bénéficie du suivi direct par la direction commerciale sous la responsabilité de M. SANOGO Ibrahim.</p>
+                        </div>
+                        <button onclick="navigateTo('contact')" class="px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-cinzel font-bold text-xs uppercase tracking-wider rounded-2xl shadow-lg shrink-0">
+                            Nous Contacter Directement
+                        </button>
+                    </div>
+
+                    <div class="mt-20 pt-16 border-t border-slate-200">
+                        
+                        <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
+                            
+                            <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm relative overflow-hidden">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 font-bold text-xl flex items-center justify-center mb-6">
+                                    <i class="fa-solid fa-microscope text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-serif font-bold text-slate-900 mb-3">Notre Engagement Qualité</h3>
+                                <p class="text-xs text-slate-600 leading-relaxed font-light mb-6">
+                                    Face à un marché compétitif, la <strong>STAB</strong> a fait de la qualité son crédo absolu pour garantir la santé et la confiance de ses consommateurs :
+                                </p>
+
+                                <ul class="space-y-4 text-xs text-slate-700">
+                                    <li class="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+                                        <div class="w-7 h-7 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 font-bold mt-0.5">
+                                            <i class="fa-solid fa-pump-soap text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="text-slate-900 block font-semibold mb-0.5">Hygiène Stricte</strong>
+                                            Mise en place d'un comité de Bonne Pratique d'Hygiène (BPH) garantissant un environnement de production irréprochable.
+                                        </div>
+                                    </li>
+
+                                    <li class="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+                                        <div class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-bold mt-0.5">
+                                            <i class="fa-solid fa-shield-halved text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="text-slate-900 block font-semibold mb-0.5">Sécurité Alimentaire</strong>
+                                            Signature d'un protocole officiel avec l'ONUDI pour le contrôle renforcé et la sécurité sanitaire continue des produits.
+                                        </div>
+                                    </li>
+
+                                    <li class="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+                                        <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 font-bold mt-0.5">
+                                            <i class="fa-solid fa-flask-vial text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="text-slate-900 block font-semibold mb-0.5">Contrôle Scientifique</strong>
+                                            Analyses systématiques grâce à un laboratoire moderne de contrôle qualité en partenariat avec (DTA/IRSAT).
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="p-8 rounded-3xl dark-lux-bg text-white border border-amber-500/20 shadow-xl relative overflow-hidden">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 font-bold text-xl flex items-center justify-center mb-6">
+                                    <i class="fa-solid fa-trophy text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-serif font-bold text-white mb-3">Expériences & Distinctions</h3>
+                                <p class="text-xs text-slate-300 leading-relaxed font-light mb-6">
+                                    Le dynamisme et le savoir-faire de la <strong>STAB</strong> ont été salués par de nombreuses distinctions nationales et internationales :
+                                </p>
+
+                                <div class="space-y-3 text-xs">
+                                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/50 flex items-center gap-3">
+                                        <i class="fa-solid fa-trophy text-amber-400 text-3xl shrink-0"></i>
+                                        <div>
+                                            <span class="px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-cinzel font-bold text-[9px] uppercase">Récemment Décerné</span>
+                                            <h4 class="font-cinzel font-bold text-amber-300 text-xs mt-1">PEEB-AWARDS 2025 — Meilleure Entreprise en Agro-Alimentaire</h4>
+                                            <p class="text-slate-300 text-[11px] mt-0.5">Prix de l'Excellence & Attestation officielle décernés lors de la 3ème édition.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-4 rounded-2xl glass-card-dark border border-amber-500/30 flex items-center gap-3">
+                                        <i class="fa-solid fa-crown text-amber-400 text-2xl shrink-0"></i>
+                                        <div>
+                                            <h4 class="font-cinzel font-bold text-amber-300 text-xs">Prix International Platine pour l'Excellence et la Qualité</h4>
+                                            <p class="text-slate-400 text-[11px] mt-0.5">Décerné à New York (USA)</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-4 rounded-2xl glass-card-dark border border-amber-500/30 flex items-center gap-3">
+                                        <i class="fa-solid fa-award text-amber-400 text-2xl shrink-0"></i>
+                                        <div>
+                                            <h4 class="font-cinzel font-bold text-amber-300 text-xs">Prix d'Or de l'Innovation de la Technologie</h4>
+                                            <p class="text-slate-400 text-[11px] mt-0.5">Décerné à Genève (Suisse)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+                            <div class="text-center max-w-2xl mx-auto mb-8">
+                                <span class="text-emerald-700 font-cinzel font-bold text-xs uppercase tracking-widest">Galerie Photo & Événements</span>
+                                <h3 class="text-2xl font-serif font-bold text-slate-900 mt-1">Nos Engagements sur le Terrain & Remise de Distinction</h3>
+                                <p class="text-slate-600 text-xs mt-2 font-light">Retour en images sur les distinctions et la chaîne de valeur de la S.T.A.B. SARL.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group hover:shadow-lg transition">
+                                    <div class="h-52 overflow-hidden relative">
+                                        <img src="https://i.postimg.cc/Df9dVwLJ/Whats-App-Image-2026-11-07-at-15-34-42.jpg" class="w-full h-full object-contain p-3 group-hover:scale-105 transition duration-500" alt="Trophée PEEB-AWARDS 2025">
+                                        <span class="absolute top-2 left-2 bg-slate-900/80 text-amber-400 text-[9px] font-cinzel px-2 py-0.5 rounded border border-amber-400/30">Trophée 2025</span>
+                                    </div>
+                                    <div class="p-3 text-center border-t border-slate-100">
+                                        <h4 class="font-serif font-bold text-slate-900 text-xs">PEEB-AWARDS 2025</h4>
+                                        <p class="text-slate-500 text-[10px] mt-0.5">Meilleure Entreprise Agro-Alimentaire</p>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group hover:shadow-lg transition">
+                                    <div class="h-52 overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Contrôle et Hygiène">
+                                        <span class="absolute top-2 left-2 bg-slate-900/80 text-emerald-400 text-[9px] font-cinzel px-2 py-0.5 rounded border border-emerald-400/30">Hygiène & Qualité</span>
+                                    </div>
+                                    <div class="p-3 text-center border-t border-slate-100">
+                                        <h4 class="font-serif font-bold text-slate-900 text-xs">Contrôle Rígoureux</h4>
+                                        <p class="text-slate-500 text-[10px] mt-0.5">Comité BPH & Partenariat IRSAT</p>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group hover:shadow-lg transition">
+                                    <div class="h-52 overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Transformation locale">
+                                        <span class="absolute top-2 left-2 bg-slate-900/80 text-amber-400 text-[9px] font-cinzel px-2 py-0.5 rounded border border-amber-400/30">Usine Bobo</span>
+                                    </div>
+                                    <div class="p-3 text-center border-t border-slate-100">
+                                        <h4 class="font-serif font-bold text-slate-900 text-xs">Transformation Usine</h4>
+                                        <p class="text-slate-500 text-[10px] mt-0.5">Installation Industrielle Z.I. n°1</p>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 group hover:shadow-lg transition">
+                                    <div class="h-52 overflow-hidden relative">
+                                        <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Équipe & Partenariats">
+                                        <span class="absolute top-2 left-2 bg-slate-900/80 text-blue-400 text-[9px] font-cinzel px-2 py-0.5 rounded border border-blue-400/30">Partenariats</span>
+                                    </div>
+                                    <div class="p-3 text-center border-t border-slate-100">
+                                        <h4 class="font-serif font-bold text-slate-900 text-xs">Échanges ONUDI</h4>
+                                        <p class="text-slate-500 text-[10px] mt-0.5">Partenariats institutionnels & sécurité</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="text-center max-w-2xl mx-auto">
+                            <span class="text-amber-600 font-cinzel font-bold text-xs uppercase tracking-widest">Du Fruit de l'Arbre au Produit Fini</span>
+                            <h3 class="text-2xl sm:text-3xl font-serif text-slate-900 font-bold mt-1">La Chaîne de Valeur du Karité ETALOR</h3>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-2 text-center group">
+                                <div class="h-36 rounded-xl overflow-hidden mb-2">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Fruits et amandes de karité du Burkina Faso">
+                                </div>
+                                <h4 class="font-cinzel font-bold text-xs text-slate-800">1. Amandes Sélectionnées</h4>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Collecte d'amandes pures du terroir</p>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-2 text-center group">
+                                <div class="h-36 rounded-xl overflow-hidden mb-2">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Extraction traditionnelle et moderne usine STAB">
+                                </div>
+                                <h4 class="font-cinzel font-bold text-xs text-slate-800">2. Transformation STAB</h4>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Extraction contrôlée & hygiénique</p>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-2 text-center group">
+                                <div class="h-36 rounded-xl overflow-hidden mb-2">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Contrôle Qualité Beurre de Karité ETALOR">
+                                </div>
+                                <h4 class="font-cinzel font-bold text-xs text-slate-800">3. Contrôle Laboratoire</h4>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Analyses de pureté strictes</p>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-2 text-center group">
+                                <div class="h-36 rounded-xl overflow-hidden mb-2">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Conditionnement Karité ETALOR 1kg et 25kg">
+                                </div>
+                                <h4 class="font-cinzel font-bold text-xs text-slate-800">4. Soin Prêt à l'Emploi</h4>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Conditionnement hygiénique scellé</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-8">
+                        <div class="text-center max-w-2xl mx-auto">
+                            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-cinzel font-bold text-[10px] uppercase tracking-widest">
+                                Vertus & Bienfaits Scientifiques
+                            </span>
+                            <h3 class="text-3xl font-serif font-bold text-slate-900 mt-3">Ses Bienfaits pour la Peau & les Cheveux</h3>
+                            <p class="text-xs text-slate-500 font-light mt-2">Découvrez pourquoi le beurre de karité ETALOR est un soin naturel irremplaçable pour toute la famille.</p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-droplet"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Hydratation Intense</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Nourrit en profondeur les peaux sèches et déshydratées. Restaure le film hydrolipidique de l'épiderme.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-sun"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Soin Protecteur</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Protège efficacement contre le vent, le froid, la poussière et les agressions du soleil tout au long de la journée.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-bandage"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Réparation Cutanée</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Apaise les irritations, régénère les gerçures, traite les peaux abîmées et prolonge le bronzage naturel.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Anti-Âge Naturel</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Stimule l'élasticité de la peau grâce à sa richesse naturelle en <strong>vitamines A et E</strong>.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-scissors"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Soin Capillaire Complexe</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Revitalise, gaine la fibre et fait briller les cheveux secs, ternes ou cassants du cuir chevelu jusqu'aux pointes.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-baby"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Passe-Partout & Bébé</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Convient à toute la famille : idéal pour masser doucement les bébés et apaiser leur peau sensible au quotidien.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl shrink-0 font-bold">
+                                <i class="fa-solid fa-spa"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base">Action Apaisante & Récupération Muscle</h4>
+                                <p class="text-slate-700 text-xs leading-relaxed font-light mt-1">
+                                    Soulage les muscles fatigués en massage corporel et calme immédiatement le feu du rasage, l'épilation ou l'échauffement cutané.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <div id="page-espace-pro" class="page-content hidden">
+            <section class="py-24 dark-lux-bg text-white relative overflow-hidden border-t-4 border-copper-500 min-h-screen">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-copper-500/20 border border-copper-500/40 text-copper-400 text-xs font-cinzel font-bold uppercase tracking-widest mb-4">
+                            <i class="fa-solid fa-briefcase"></i> Service Commercial & Vente en Gros
+                        </div>
+                        <h2 class="text-4xl sm:text-5xl font-serif text-white font-normal">Commandes Gros & Vente de Karité 25kg</h2>
+                        <div class="w-24 h-1 copper-btn-bg mx-auto mt-4 rounded-full"></div>
+                        <p class="text-slate-400 text-xs sm:text-sm font-light mt-4">Pour les commerçants, éleveurs, coopératives et vente en gros (notamment le beurre de karité ETALOR 25kg). Contactez M. SANOGO Ibrahim au +226 60 90 59 58.</p>
+                    </div>
+
+                    <div class="p-6 sm:p-10 rounded-3xl bg-slate-900 border border-copper-500/30 shadow-2xl">
+                        <h3 class="text-2xl font-serif text-white mb-6">Demande de Devis Direct Usine</h3>
+                        <form onsubmit="handleDevisSubmit(event)" class="space-y-6 text-xs">
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-cinzel text-slate-300 uppercase mb-2">Nom / Entreprise *</label>
+                                    <input type="text" id="devis-nom" required placeholder="Votre nom ou raison sociale..." class="w-full p-4 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-copper-500">
+                                </div>
+                                <div>
+                                    <label class="block font-cinzel text-slate-300 uppercase mb-2">Téléphone / WhatsApp *</label>
+                                    <input type="tel" id="devis-tel" required placeholder="+226 XX XX XX XX" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-copper-500">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-cinzel text-amber-400 uppercase font-bold mb-3">Produits Concernés (Sélection Multiple) *</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                                        <input type="checkbox" name="devis-produits" value="karite" onchange="updateDynamicQuantities()" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 font-medium">Beurre de karité ETALOR 25kg (Gros)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                                        <input type="checkbox" name="devis-produits" value="huiles" onchange="updateDynamicQuantities()" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 font-medium">Huiles de marque etalor</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                                        <input type="checkbox" name="devis-produits" value="tourteaux" onchange="updateDynamicQuantities()" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 font-medium">Tourteaux (bèguè balo)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                                        <input type="checkbox" name="devis-produits" value="soja" onchange="updateDynamicQuantities()" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 font-medium">Tourteau de Soja Spécifique</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                                        <input type="checkbox" name="devis-produits" value="cereales" onchange="updateDynamicQuantities()" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 font-medium">Céréales maïs (doulou kafa)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900 border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                                        <input type="checkbox" name="devis-produits" value="autre" onchange="updateDynamicQuantities()" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 font-medium">Autre Demande Gros Volume</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-cinzel text-amber-400 uppercase font-bold mb-2">Quantités Souhaitées (Selon Produits Sélectionnés) *</label>
+                                    <div id="dynamic-quantites-container" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 max-h-64 overflow-y-auto">
+                                        <p id="no-product-msg" class="text-slate-400 italic text-[11px]">Veuillez d'abord cocher un ou plusieurs produits ci-dessus pour afficher les options de quantité correspondantes.</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-cinzel text-amber-400 uppercase font-bold mb-2">Ville(s) de Livraison (Sélection Multiple) *</label>
+                                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2.5 max-h-[380px] overflow-y-auto">
+                                        <label class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-amber-500/50 transition">
+                                            <input type="checkbox" name="devis-villes" value="Bobo-Dioulasso (Siège STAB)" class="w-4 h-4 accent-amber-500" checked>
+                                            <span class="text-slate-200">Bobo-Dioulasso</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-amber-500/50 transition">
+                                            <input type="checkbox" name="devis-villes" value="Ouagadougou" class="w-4 h-4 accent-amber-500">
+                                            <span class="text-slate-200">Ouagadougou</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-amber-500/50 transition">
+                                            <input type="checkbox" name="devis-villes" value="Koudougou / Banfora / Dedougou" class="w-4 h-4 accent-amber-500">
+                                            <span class="text-slate-200">Koudougou</span>
+                                        </label>
+
+                                        <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+                                            <label class="flex items-center gap-3 p-2.5 cursor-pointer hover:border-amber-500/50 transition">
+                                                <input type="checkbox" id="chk-autres-villes-bf" name="devis-villes" value="Autres villes du Burkina Faso" onchange="toggleBurkinaCitiesList()" class="w-4 h-4 accent-amber-500">
+                                                <span class="text-slate-200">Autres Villes Burkina Faso</span>
+                                            </label>
+                                            <div id="container-villes-bf" class="hidden p-3 border-t border-slate-800/80 bg-slate-950/80">
+                                                <label class="block text-[10px] text-amber-400 font-cinzel mb-1">Sélectionner la ville du Burkina Faso :</label>
+                                                <select id="select-ville-bf" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500">
+                                                    <option value="">-- Choisir une ville burkinabè --</option>
+                                                    <option value="Koudougou">Koudougou</option>
+                                                    <option value="Banfora">Banfora</option>
+                                                    <option value="Dédougou">Dédougou</option>
+                                                    <option value="Kaya">Kaya</option>
+                                                    <option value="Fada N'Gourma">Fada N'Gourma</option>
+                                                    <option value="Tenkodogo">Tenkodogo</option>
+                                                    <option value="Ouahigouya">Ouahigouya</option>
+                                                    <option value="Gaoua">Gaoua</option>
+                                                    <option value="Houndé">Houndé</option>
+                                                    <option value="Orodara">Orodara</option>
+                                                    <option value="Dori">Dori</option>
+                                                    <option value="Koupéla">Koupéla</option>
+                                                    <option value="Pouytenga">Pouytenga</option>
+                                                    <option value="Kombissiri">Kombissiri</option>
+                                                    <option value="Reo">Réo</option>
+                                                    <option value="Ziniaré">Ziniaré</option>
+                                                    <option value="Manga">Manga</option>
+                                                    <option value="Leo">Léo</option>
+                                                    <option value="Boromo">Boromo</option>
+                                                    <option value="Niangoloko">Niangoloko</option>
+                                                    <option value="Tougan">Tougan</option>
+                                                    <option value="Nouna">Nouna</option>
+                                                    <option value="Djibo">Djibo</option>
+                                                    <option value="Gorom-Gorom">Gorom-Gorom</option>
+                                                    <option value="Kongoussi">Kongoussi</option>
+                                                    <option value="Boulsa">Boulsa</option>
+                                                    <option value="Garango">Garango</option>
+                                                    <option value="Bitiou">Bittou</option>
+                                                    <option value="Bogandé">Bogandé</option>
+                                                    <option value="Diapaga">Diapaga</option>
+                                                    <option value="Pama">Pama</option>
+                                                    <option value="Pô">Pô</option>
+                                                    <option value="Kankalaba">Kankalaba</option>
+                                                    <option value="Solenzo">Solenzo</option>
+                                                    <option value="Sindou">Sindou</option>
+                                                    <option value="Batie">Batié</option>
+                                                    <option value="Titao">Titao</option>
+                                                    <option value="Yako">Yako</option>
+                                                    <option value="Boussé">Boussé</option>
+                                                    <option value="Gourcy">Gourcy</option>
+                                                    <option value="Zorgho">Zorgho</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+                                            <label class="flex items-center gap-3 p-2.5 cursor-pointer hover:border-amber-500/50 transition">
+                                                <input type="checkbox" id="chk-export-international" name="devis-villes" value="Export International" onchange="toggleInternationalExport()" class="w-4 h-4 accent-amber-500">
+                                                <span class="text-slate-200">Export International (Sous-région / Monde)</span>
+                                            </label>
+                                            <div id="container-export-monde" class="hidden p-3 border-t border-slate-800/80 bg-slate-950/80 space-y-2.5">
+                                                <div>
+                                                    <label class="block text-[10px] text-amber-400 font-cinzel mb-1">Sélectionner le Pays de Destination (Tous les pays du monde) :</label>
+                                                    <select id="select-pays-monde" class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500">
+                                                        <option value="">-- Choisir un pays dans le monde --</option>
+                                                        <optgroup label="Afrique de l'Ouest & UEMOA / CEDEAO">
+                                                            <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                                                            <option value="Mali">Mali</option>
+                                                            <option value="Niger">Niger</option>
+                                                            <option value="Ghana">Ghana</option>
+                                                            <option value="Togo">Togo</option>
+                                                            <option value="Bénin">Bénin</option>
+                                                            <option value="Sénégal">Sénégal</option>
+                                                            <option value="Guinée">Guinée</option>
+                                                            <option value="Nigeria">Nigeria</option>
+                                                            <option value="Mauritanie">Mauritanie</option>
+                                                            <option value="Gambie">Gambie</option>
+                                                            <option value="Guinée-Bissau">Guinée-Bissau</option>
+                                                            <option value="Sierra Leone">Sierra Leone</option>
+                                                            <option value="Liberia">Liberia</option>
+                                                            <option value="Cap-Vert">Cap-Vert</option>
+                                                        </optgroup>
+                                                        <optgroup label="Reste de l'Afrique">
+                                                            <option value="Algérie">Algérie</option>
+                                                            <option value="Angola">Angola</option>
+                                                            <option value="Cameroun">Cameroun</option>
+                                                            <option value="Congo (Brazzaville)">Congo (Brazzaville)</option>
+                                                            <option value="Congo (RDC)">Congo (RDC)</option>
+                                                            <option value="Égypte">Égypte</option>
+                                                            <option value="Éthiopie">Éthiopie</option>
+                                                            <option value="Gabon">Gabon</option>
+                                                            <option value="Kenya">Kenya</option>
+                                                            <option value="Maroc">Maroc</option>
+                                                            <option value="Rwanda">Rwanda</option>
+                                                            <option value="Afrique du Sud">Afrique du Sud</option>
+                                                            <option value="Tchad">Tchad</option>
+                                                            <option value="Tunisie">Tunisie</option>
+                                                        </optgroup>
+                                                        <optgroup label="Europe">
+                                                            <option value="France">France</option>
+                                                            <option value="Allemagne">Allemagne</option>
+                                                            <option value="Belgique">Belgique</option>
+                                                            <option value="Suisse">Suisse</option>
+                                                            <option value="Espagne">Espagne</option>
+                                                            <option value="Italie">Italie</option>
+                                                            <option value="Royaume-Uni">Royaume-Uni</option>
+                                                            <option value="Pays-Bas">Pays-Bas</option>
+                                                            <option value="Portugal">Portugal</option>
+                                                            <option value="Autriche">Autriche</option>
+                                                            <option value="Suède">Suède</option>
+                                                            <option value="Norvège">Norvège</option>
+                                                            <option value="Danemark">Danemark</option>
+                                                            <option value="Pologne">Pologne</option>
+                                                            <option value="Finlande">Finlande</option>
+                                                            <option value="Grèce">Grèce</option>
+                                                            <option value="Roumanie">Roumanie</option>
+                                                            <option value="République Tchèque">République Tchèque</option>
+                                                            <option value="Hongrie">Hongrie</option>
+                                                            <option value="Irlande">Irlande</option>
+                                                        </optgroup>
+                                                        <optgroup label="Amériques">
+                                                            <option value="États-Unis">États-Unis</option>
+                                                            <option value="Canada">Canada</option>
+                                                            <option value="Brésil">Brésil</option>
+                                                            <option value="Mexique">Mexique</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-[10px] text-amber-400 font-cinzel mb-1">Préciser la ville de destination :</label>
+                                                    <input type="text" id="input-ville-internationale" placeholder="Ex: Paris, Abidjan, New York, Bamako..." class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block font-cinzel text-slate-300 uppercase mb-2">Paiement Souhaité</label>
+                                    <select id="devis-paiement" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-700 text-white font-medium focus:outline-none focus:border-copper-500">
+                                        <option>Orange Money</option>
+                                        <option>Moov Money</option>
+                                        <option>Chèque / Virement Bancaire</option>
+                                        <option>Espèces à la livraison</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-cinzel text-slate-300 uppercase mb-2">Informations Complémentaires & Précisions</label>
+                                    <input type="text" id="devis-message" placeholder="Précisez votre adresse exacte, vos spécifications..." class="w-full p-4 rounded-xl bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-copper-500">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 copper-btn-bg hover:opacity-90 text-white font-cinzel font-bold text-xs uppercase tracking-widest rounded-xl transition shadow-xl flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-paper-plane text-base"></i> Valider & Ouvrir dans Gmail (etabfs@yahoo.fr)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="page-prix-newyork" class="page-content hidden">
+            <section class="py-24 dark-lux-bg text-white relative overflow-hidden border-b border-amber-500/20 min-h-screen">
+                <div class="absolute -top-32 -right-32 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-cinzel font-bold tracking-widest uppercase mb-4">
+                            <i class="fa-solid fa-trophy text-luxury-gold"></i> Distinctions & Awards de la STAB
+                        </div>
+                        <h2 class="text-4xl sm:text-6xl font-serif text-white leading-tight font-normal">
+                            Nos Prix & Trophées d'Excellence <br>
+                            <span class="gold-gradient-text font-cinzel font-bold">National & International</span>
+                        </h2>
+                        <div class="w-24 h-1 copper-btn-bg mx-auto mt-6 rounded-full"></div>
+                        <p class="text-slate-300 text-sm sm:text-base font-light mt-6 leading-relaxed">
+                            Découvrez les distinctions prestigieuses décernées à S.T.A.B. SARL pour la qualité supérieure de nos huiles etalor, le beurre de karité ETALOR et nos produits dérivés du maïs et tourteaux.
+                        </p>
+                    </div>
+
+                    <div class="grid lg:grid-cols-12 gap-8 items-center mb-16">
+                        <div class="lg:col-span-5 flex justify-center">
+                            <div class="w-full max-w-md p-8 rounded-3xl glass-card-dark border border-amber-500/30 text-center shadow-2xl relative gold-glow">
+                                <div class="w-28 h-28 mx-auto rounded-full copper-btn-bg p-1 shadow-2xl mb-6">
+                                    <div class="w-full h-full bg-luxury-dark rounded-full flex items-center justify-center">
+                                        <i class="fa-solid fa-trophy text-5xl text-amber-400"></i>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-cinzel tracking-widest uppercase text-amber-400 font-bold block">Dernier Prix en Date (2025)</span>
+                                <h3 class="text-2xl font-serif text-white font-bold mt-2">PEEB-AWARDS 2025</h3>
+                                <p class="text-amber-300 font-cinzel text-xs font-semibold mt-1">Meilleure Entreprise en Agro-Alimentaire</p>
+                                <p class="text-slate-400 text-xs font-light mt-3 leading-relaxed">
+                                    Prix de l'Excellence attribué à S.T.A.B. SARL pour la qualité de sa transformation locale et sa contribution au secteur agro-alimentaire du Burkina Faso.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-6">
+                            <h3 class="text-3xl font-serif text-white font-normal">Une Reconnaissance Continue du Savoir-Faire</h3>
+                            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed font-light">
+                                Fondée en 2006, S.T.A.B. s'est imposée comme un pilier agro-alimentaire dans la région du Guiriko grâce à la qualité exceptionnelle de ses huiles etalor, ses aliments bétails bèguè balo, ses céréales maïs doulou kafa et son beurre de karité ETALOR.
+                            </p>
+
+                            <div class="grid sm:grid-cols-3 gap-4 pt-2">
+                                <div class="p-5 rounded-2xl glass-card-dark border border-amber-500/30">
+                                    <i class="fa-solid fa-trophy text-2xl text-amber-400 mb-3"></i>
+                                    <h4 class="font-cinzel font-bold text-white text-xs">PEEB-AWARDS 2025</h4>
+                                    <p class="text-slate-400 text-[11px] mt-1">Trophée & Attestation de la Meilleure Entreprise Agro-Alimentaire.</p>
+                                </div>
+
+                                <div class="p-5 rounded-2xl glass-card-dark border border-slate-700">
+                                    <i class="fa-solid fa-crown text-2xl text-copper-500 mb-3"></i>
+                                    <h4 class="font-cinzel font-bold text-white text-xs">Prix Platine New York</h4>
+                                    <p class="text-slate-400 text-[11px] mt-1">Reconnaissance de l'excellence globale du management.</p>
+                                </div>
+
+                                <div class="p-5 rounded-2xl glass-card-dark border border-slate-700">
+                                    <i class="fa-solid fa-award text-2xl text-copper-500 mb-3"></i>
+                                    <h4 class="font-cinzel font-bold text-white text-xs">Prix d'Or Genève</h4>
+                                    <p class="text-slate-400 text-[11px] mt-1">Trophée attribué pour l'innovation dans la transformation agroalimentaire.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-16 pt-12 border-t border-amber-500/20">
+                        <div class="text-center max-w-3xl mx-auto mb-12">
+                            <span class="text-amber-400 font-cinzel font-bold text-xs uppercase tracking-widest">Galerie Événements & Trophées</span>
+                            <h3 class="text-3xl font-serif font-bold text-white mt-1">Retour en Images sur nos Distinctions</h3>
+                            <p class="text-slate-400 text-xs sm:text-sm mt-2 font-light">
+                                Galerie photo officielle immortalisant la remise des prix, trophées de distinction et moments forts des événements nationaux et internationaux de S.T.A.B. SARL.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="rounded-3xl glass-card-dark border border-amber-500/30 overflow-hidden group hover:border-amber-400 transition duration-300">
+                                <div class="h-64 overflow-hidden relative bg-slate-900/50">
+                                    <img src="https://i.postimg.cc/D0B0ZWwZ/image.png" class="w-full h-full object-contain p-4 group-hover:scale-105 transition duration-500" alt="Trophée PEEB-AWARDS 2025">
+                                    <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-cinzel font-bold text-[10px] px-3 py-1 rounded-full uppercase">PEEB-AWARDS 2025</span>
+                                </div>
+                                <div class="p-5 text-center">
+                                    <h4 class="font-serif font-bold text-amber-300 text-base">Trophée d'Excellence 2025</h4>
+                                    <p class="text-slate-400 text-xs mt-1">S.T.A.B. SARL sacrée Meilleure Entreprise en Agro-Alimentaire lors de la 3ème édition.</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-3xl glass-card-dark border border-amber-500/30 overflow-hidden group hover:border-amber-400 transition duration-300">
+                                <div class="h-64 overflow-hidden relative bg-slate-900/50">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Remise de Prix International Quality Summit New York">
+                                    <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-cinzel font-bold text-[10px] px-3 py-1 rounded-full uppercase">New York, USA</span>
+                                </div>
+                                <div class="p-5 text-center">
+                                    <h4 class="font-serif font-bold text-amber-300 text-base">Prix International Quality Summit</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Cérémonie de prestige et remise du Trophée de Qualité à New York.</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-3xl glass-card-dark border border-amber-500/30 overflow-hidden group hover:border-amber-400 transition duration-300">
+                                <div class="h-64 overflow-hidden relative bg-slate-900/50">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Prix d'Or Genève Suisse">
+                                    <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-cinzel font-bold text-[10px] px-3 py-1 rounded-full uppercase">Genève, Suisse</span>
+                                </div>
+                                <div class="p-5 text-center">
+                                    <h4 class="font-serif font-bold text-amber-300 text-base">Prix d'Or de l'Innovation</h4>
+                                    <p class="text-slate-400 text-[11px] mt-1">Reconnaissance de l'innovation technologique dans la transformation agroalimentaire.</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-3xl glass-card-dark border border-amber-500/30 overflow-hidden group hover:border-amber-400 transition duration-300">
+                                <div class="h-64 overflow-hidden relative bg-slate-900/50">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Cérémonie de remise officielle des diplômes et attestations">
+                                    <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-cinzel font-bold text-[10px] px-3 py-1 rounded-full uppercase">Cérémonie Officielle</span>
+                                </div>
+                                <div class="p-5 text-center">
+                                    <h4 class="font-serif font-bold text-amber-300 text-base">Attestation d'Excellence</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Remise officielle du diplôme d'honneur et attestation de mérite agroalimentaire.</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-3xl glass-card-dark border border-amber-500/30 overflow-hidden group hover:border-amber-400 transition duration-300">
+                                <div class="h-64 overflow-hidden relative bg-slate-900/50">
+                                    <img src="https://images.unsplash.com/" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Exposition et salons internationaux STAB">
+                                    <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-cinzel font-bold text-[10px] px-3 py-1 rounded-full uppercase">Salons & Expositions</span>
+                                </div>
+                                <div class="p-5 text-center">
+                                    <h4 class="font-serif font-bold text-amber-300 text-base">Présentation des Produits STAB</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Mise en valeur du beurre de Karité ETALOR et des huiles lors des forums d'affaires.</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-3xl glass-card-dark border border-amber-500/30 overflow-hidden group hover:border-amber-400 transition duration-300">
+                                <div class="h-64 overflow-hidden relative bg-slate-900/50">
+                                    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Rencontre Partenaires et Autorités">
+                                    <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-cinzel font-bold text-[10px] px-3 py-1 rounded-full uppercase">Partenariats</span>
+                                </div>
+                                <div class="p-5 text-center">
+                                    <h4 class="font-serif font-bold text-amber-300 text-base">Rayonnement National</h4>
+                                    <p class="text-slate-400 text-xs mt-1">Échanges stratégiques avec les acteurs économiques du secteur agro-alimentaire.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="page-etalor" class="page-content hidden">
+            <section class="py-20 bg-luxury-cream border-y border-slate-200 min-h-screen">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+                    
+                    <div class="p-8 lg:p-14 rounded-3xl dark-lux-bg text-white shadow-2xl relative overflow-hidden border border-amber-500/20">
+                        <div class="grid lg:grid-cols-2 gap-10 items-center relative z-10">
+                            <div class="space-y-6">
+                                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-cinzel font-bold text-[10px] uppercase tracking-widest shadow-lg">
+                                    <i class="fa-solid fa-leaf text-amber-400"></i> 100% Natural Ingredients — Fabriqué au Burkina Faso
+                                </div>
+                                <h2 class="text-4xl sm:text-6xl font-serif text-white font-normal leading-tight">
+                                    Beurre de Karité <br><span class="copper-gradient-text italic font-bold">ETALOR</span>
+                                </h2>
+                                <p class="text-amber-200/90 font-cinzel text-xs uppercase tracking-widest font-semibold">
+                                    Un trésor de notre territoire • L'éclat brut de la nature
+                                </p>
+                                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed font-light">
+                                    Le beurre de karité <strong>ETALOR</strong> est un produit <strong>100% naturel</strong>, issu des amandes de karité sélectionnées avec soin au Burkina Faso. Il est transformé par S.T.A.B. selon des normes de qualité strictes pour vous offrir un beurre pur, riche et extrêmement bénéfique pour votre peau et vos cheveux.
+                                </p>
+
+                                <div class="pt-2 flex flex-wrap gap-4">
+                                    <button onclick="addToCart('Beurre de Karité ETALOR (1kg)', 2000)" class="px-7 py-3.5 copper-btn-bg hover:opacity-90 text-white font-cinzel font-bold text-xs uppercase tracking-widest rounded-2xl shadow-xl transition flex items-center gap-2">
+                                        <i class="fa-solid fa-bag-shopping"></i> Commander 1kg (2 000 FCFA HT)
+                                    </button>
+                                    <button onclick="navigateTo('espace-pro')" class="px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-cinzel font-bold text-xs uppercase tracking-widest rounded-2xl transition">
+                                        Achat Gros 25kg
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-center relative">
+                                <div class="w-72 h-72 sm:w-96 sm:h-96 rounded-3xl bg-slate-800/80 border border-amber-500/30 overflow-hidden relative shadow-2xl group">
+                                    <img src="https://i.postimg.cc/Hst6XP0y/image.png" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Beurre de Karité ETALOR">
+                                    <div class="absolute bottom-4 left-4 right-4 bg-slate-900/80 backdrop-blur-md p-3 rounded-2xl border border-amber-400/30 text-center">
+                                        <span class="text-amber-400 font-cinzel font-bold text-xs block uppercase">Authentique & Nourrissant</span>
+                                        <span class="text-slate-300 text-[10px]">Hydratant • Protecteur • Apaisant</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-sm space-y-8">
+                        <div class="text-center max-w-2xl mx-auto">
+                            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-cinzel font-bold text-[10px] uppercase tracking-widest">
+                                Vertus & Bienfaits Scientifiques
+                            </span>
+                            <h3 class="text-3xl font-serif font-bold text-slate-900 mt-3">Ses Bienfaits pour la Peau & les Cheveux</h3>
+                            <p class="text-xs text-slate-500 font-light mt-2">Découvrez pourquoi le beurre de karité ETALOR est un soin naturel irremplaçable pour toute la famille.</p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-droplet"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Hydratation Intense</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Nourrit en profondeur les peaux sèches et déshydratées. Restaure le film hydrolipidique de l'épiderme.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-sun"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Soin Protecteur</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Protège efficacement contre le vent, le froid, la poussière et les agressions du soleil tout au long de la journée.
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-amber-400 transition hover:shadow-md">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg mb-4 font-bold">
+                                    <i class="fa-solid fa-bandage"></i>
+                                </div>
+                                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Réparation Cutanée</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed font-light">
+                                    Apaise les irritations, régénère les gerçures, traite les peaux abîmées et prolonge le bronzage naturel.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="page-contact" class="page-content hidden">
+            <section class="py-24 bg-luxury-cream min-h-screen">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-3xl mx-auto text-center mb-16">
+                        <span class="text-copper-600 font-cinzel font-bold uppercase tracking-widest text-xs">Siège Social & Usine</span>
+                        <h2 class="text-3xl font-serif font-bold text-slate-900 mt-2">S.T.A.B. SARL — Bobo-Dioulasso</h2>
+                        <p class="text-slate-600 text-xs mt-2">Société de Transformation Agro-Alimentaire du Burkina</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8 text-center mb-12">
+                        <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm">
+                            <i class="fa-solid fa-location-dot text-3xl text-copper-500 mb-4"></i>
+                            <h4 class="font-cinzel font-bold text-slate-900 text-sm">Adresse Physique</h4>
+                            <p class="text-slate-600 text-xs mt-2 leading-relaxed">
+                                Bobo-Dioulasso, Secteur n°19<br>
+                                Zone Industrielle n°1<br>
+                                BP 1038 01 Bobo-Dioulasso
+                            </p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm">
+                            <i class="fa-solid fa-phone text-3xl text-copper-500 mb-4"></i>
+                            <h4 class="font-cinzel font-bold text-slate-900 text-sm">Contacts Téléphoniques</h4>
+                            <p class="text-slate-600 text-xs mt-2 leading-relaxed">
+                                <strong>WhatsApp / Commandes :</strong> +226 60 90 59 58<br>
+                                <strong>Ligne Principale :</strong> +226 65 86 10 80<br>
+                                <strong>Autre Contact :</strong> +226 76 07 72 88
+                            </p>
+                        </div>
+
+                        <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm">
+                            <i class="fa-solid fa-clock text-3xl text-copper-500 mb-4"></i>
+                            <h4 class="font-cinzel font-bold text-slate-900 text-sm">Horaires d'Ouverture</h4>
+                            <p class="text-slate-600 text-xs mt-2 leading-relaxed">
+                                <strong>Disponibilité :</strong> De 8h00 à 17h00<br>
+                                <strong>Retrait en Boutique :</strong> De 8h00 à 16h00<br>
+                                Courriel : <strong>etabfs@yahoo.fr</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 rounded-3xl bg-slate-900 text-white text-center text-xs space-y-2">
+                        <p class="font-cinzel font-bold text-amber-400 uppercase">Informations Légalement Enregistrées :</p>
+                        <p class="text-slate-300"><strong>RCCM :</strong> BF BBD 2006 B 862 &nbsp;|&nbsp; <strong>IFU :</strong> N°00081009T &nbsp;|&nbsp; <strong>Responsables :</strong> M. SANOGO Sory / M. SANOGO Ibrahim</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="bg-luxury-dark text-slate-400 py-16 border-t border-slate-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-white p-1 overflow-hidden border border-slate-700">
+                            <img src="https://i.postimg.cc/D0B0ZWwZ/image.png" alt="Logo S.T.A.B. SARL" class="w-full h-full object-contain">
+                        </div>
+                        <span class="font-cinzel font-bold text-white text-lg">S.T.A.B. SARL</span>
+                    </div>
+                    <p class="text-slate-400 font-light leading-relaxed text-[11px]">
+                        Société de Transformation Agro-Alimentaire du Burkina.<br>
+                        Producteur des huiles etalor, tourteaux bèguè balo, tourteau de soja, céréales maïs doulou kafa et du Beurre de Karité ETALOR.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-cinzel text-white font-bold text-sm mb-4 uppercase tracking-widest">Navigation</h4>
+                    <ul class="space-y-2 text-[11px]">
+                        <li><button onclick="navigateTo('accueil')" class="hover:text-copper-400 transition">Accueil</button></li>
+                        <li><button onclick="navigateTo('produits')" class="hover:text-copper-400 transition">Boutique & Catalogues</button></li>
+                        <li><button onclick="navigateTo('etalor')" class="hover:text-amber-400 transition text-amber-400">Beurre Karité ETALOR</button></li>
+                        <li><button onclick="navigateTo('engagements')" class="hover:text-emerald-400 transition text-emerald-400">Nos 7 Engagements</button></li>
+                        <li><button onclick="navigateTo('prix-newyork')" class="hover:text-amber-400 transition text-amber-400">Prix New York</button></li>
+                        <li><button onclick="navigateTo('espace-pro')" class="hover:text-copper-400 transition">Vente en Gros B2B</button></li>
+                        <li><button onclick="navigateTo('contact')" class="hover:text-copper-400 transition">Contact & Siège</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-cinzel text-white font-bold text-sm mb-4 uppercase tracking-widest">Siège & Usine</h4>
+                    <ul class="space-y-2 text-[11px] font-light">
+                        <li><i class="fa-solid fa-location-dot text-copper-500 mr-1.5"></i> Bobo-Dioulasso, Secteur 19, Z.I. n°1</li>
+                        <li><i class="fa-solid fa-phone text-copper-500 mr-1.5"></i> +226 60 90 59 58 / +226 65 86 10 80</li>
+                        <li><i class="fa-solid fa-envelope text-copper-500 mr-1.5"></i> etabfs@yahoo.fr</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-cinzel text-white font-bold text-sm mb-4 uppercase tracking-widest">Garantie & Qualité</h4>
+                    <p class="text-slate-400 font-light leading-relaxed text-[11px]">
+                        Produits certifiés 100% naturels conformes aux exigences sanitaires. Transformation locale de qualité sous la supervision de M. SANOGO Sory.
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-500">
+                <p>© S.T.A.B. SARL — Tous droits réservés.</p>
+                <p>Bobo-Dioulasso, Burkina Faso</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let cart = [];
+        let wishlist = [];
+        const sliderStates = {};
+
+        function moveProductSlide(sliderId, direction) {
+            const slider = document.getElementById(sliderId);
+            if (!slider) return;
+            const totalSlides = slider.children.length;
+
+            if (!(sliderId in sliderStates)) {
+                sliderStates[sliderId] = 0;
+            }
+
+            sliderStates[sliderId] = (sliderStates[sliderId] + direction + totalSlides) % totalSlides;
+            slider.style.transform = `translateX(-${sliderStates[sliderId] * 100}%)`;
+        }
+
+        let currentSlideIndex = 0;
+        function initHeroSlideshow() {
+            const slides = document.querySelectorAll('.hero-slide');
+            if (slides.length === 0) return;
+
+            setInterval(() => {
+                slides[currentSlideIndex].classList.remove('active');
+                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                slides[currentSlideIndex].classList.add('active');
+            }, 5000);
+        }
+
+        let currentFactorySlide = 0;
+        let factoryInterval;
+
+        function goToFactorySlide(index) {
+            const track = document.getElementById('factory-carousel-track');
+            const dots = document.querySelectorAll('.factory-dot');
+            if (!track) return;
+
+            currentFactorySlide = index;
+            track.style.transform = `translateX(-${currentFactorySlide * 100}%)`;
+
+            dots.forEach((dot, idx) => {
+                if (idx === currentFactorySlide) {
+                    dot.classList.remove('bg-slate-700');
+                    dot.classList.add('bg-amber-500', 'w-6');
+                } else {
+                    dot.classList.remove('bg-amber-500', 'w-6');
+                    dot.classList.add('bg-slate-700', 'w-2.5');
+                }
+            });
+        }
+
+        function nextFactorySlide() {
+            currentFactorySlide = (currentFactorySlide + 1) % 3;
+            goToFactorySlide(currentFactorySlide);
+        }
+
+        function prevFactorySlide() {
+            currentFactorySlide = (currentFactorySlide - 1 + 3) % 3;
+            goToFactorySlide(currentFactorySlide);
+        }
+
+        function initFactoryCarousel() {
+            if (factoryInterval) clearInterval(factoryInterval);
+            factoryInterval = setInterval(() => {
+                nextFactorySlide();
+            }, 4000);
+        }
+
+        function navigateTo(pageId) {
+            const pages = document.querySelectorAll('.page-content');
+            
+            pages.forEach(page => {
+                page.classList.remove('active-page');
+                setTimeout(() => {
+                    if (!page.classList.contains('active-page')) {
+                        page.classList.add('hidden');
+                    }
+                }, 300);
+            });
+
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                setTimeout(() => {
+                    targetPage.classList.remove('hidden');
+                    void targetPage.offsetWidth;
+                    targetPage.classList.add('active-page');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    if (pageId === 'engagements') {
+                        goToFactorySlide(0);
+                        initFactoryCarousel();
+                    }
+                }, 150);
+            }
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active-link', 'text-copper-600');
+            });
+
+            const activeLink = document.querySelector(`.nav-${pageId}`);
+            if (activeLink) {
+                activeLink.classList.add('active-link', 'text-copper-600');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            navigateTo('accueil');
+            initHeroSlideshow();
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('open');
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('Votre panier est vide.');
+                return;
+            }
+            toggleCart();
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('open');
+            
+            const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            document.getElementById('checkout-total-price').textContent = totalPrice.toLocaleString('fr-FR') + ' FCFA HT';
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('open');
+        }
+
+        function addSelectedProduct(baseName, selectId) {
+            const select = document.getElementById(selectId);
+            const selectedOption = select.options[select.selectedIndex];
+            const size = selectedOption.value;
+            const price = parseInt(selectedOption.getAttribute('data-price'));
+            
+            const fullName = `${baseName} (${size})`;
+            addToCart(fullName, price);
+        }
+
+        function addToCart(name, price) {
+            const existing = cart.find(item => item.name === name);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCartUI();
+            showToast(`"${name}" a été ajouté à votre panier.`);
+        }
+
+        function toggleWishlist(productName) {
+            const idx = wishlist.indexOf(productName);
+            if (idx > -1) {
+                wishlist.splice(idx, 1);
+                showToast(`Retiré des favoris : ${productName}`);
+            } else {
+                wishlist.push(productName);
+                showToast(`Ajouté aux favoris : ${productName}`);
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+
+            const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+            const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = totalPrice.toLocaleString('fr-FR') + ' FCFA HT';
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-xs font-light">Votre panier est vide pour le moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map((item, index) => `
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200 transition-all hover:bg-slate-100">
+                    <div class="flex-1 pr-2">
+                        <h4 class="font-cinzel font-bold text-xs text-slate-900">${item.name}</h4>
+                        <span class="text-[11px] text-slate-500">${item.price.toLocaleString('fr-FR')} FCFA x ${item.quantity}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-xs text-copper-600">${(item.price * item.quantity).toLocaleString('fr-FR')} FCFA</span>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function processOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('order-name').value;
+            const phone = document.getElementById('order-phone').value;
+            const city = document.getElementById('order-city').value;
+            const district = document.getElementById('order-district').value;
+            const address = document.getElementById('order-address').value;
+            const payment = document.querySelector('input[name="payment_method"]:checked').value;
+
+            const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+            let summary = `NOUVELLE COMMANDE STAB SARL SITE WEB\n\n`;
+            summary += `Client : ${name}\n`;
+            summary += `Téléphone : ${phone}\n`;
+            summary += `Livraison : ${city}, ${district} (${address})\n`;
+            summary += `Mode de Paiement : ${payment}\n\n`;
+            summary += `DÉTAILS PRODUITS (HT) :\n`;
+            cart.forEach(item => {
+                summary += `• ${item.name} x${item.quantity} = ${(item.price * item.quantity).toLocaleString('fr-FR')} FCFA\n`;
+            });
+            summary += `\nTOTAL SOUS-TOTAL (HT) : ${totalPrice.toLocaleString('fr-FR')} FCFA\n`;
+            summary += `(Tarif de livraison à définir selon la quantité et la distance)`;
+
+            const encoded = encodeURIComponent(summary);
+            window.open(`https://wa.me/22660905958?text=${encoded}`, '_blank');
+
+            closeCheckoutModal();
+            cart = [];
+            updateCartUI();
+            showToast('Commande envoyée avec succès sur WhatsApp !');
+        }
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                showToast('Votre panier est vide.');
+                return;
+            }
+            openCheckoutModal();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('product-search').value.toLowerCase();
+            const cards = document.querySelectorAll('.product-card');
+
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterProducts(category) {
+            const cards = document.querySelectorAll('.product-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('copper-btn-bg', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-700');
+            });
+            
+            cards.forEach(card => {
+                if (category === 'all' || card.classList.contains(category)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        const quantityOptionsMap = {
+            karite: {
+                title: "Beurre de Karité ETALOR 25kg",
+                items: [
+                    "1 à 10 cartons/fûts de Karité (25kg)",
+                    "11 à 50 cartons/fûts de Karité (25kg)",
+                    "+50 cartons/fûts de Karité (Grossiste & Export)"
+                ]
+            },
+            huiles: {
+                title: "Huiles de marque etalor",
+                items: [
+                    "50 à 200 Litres d'Huile etalor",
+                    "201 à 1 000 Litres d'Huile etalor",
+                    "Commande par Palette / Container d'Huile"
+                ]
+            },
+            tourteaux: {
+                title: "Tourteaux bèguè balo",
+                items: [
+                    "10 à 50 sacs (50kg) Aliment Bétail/Volaille",
+                    "1 à 5 Tonnes de Tourteaux bèguè balo",
+                    "+5 Tonnes (Usines / Gros Éleveurs)"
+                ]
+            },
+            soja: {
+                title: "Tourteau de Soja Pur",
+                items: [
+                    "10 à 50 sacs (50kg) Tourteau de Soja",
+                    "1 à 5 Tonnes de Soja",
+                    "+5 Tonnes (Contrat régulier)"
+                ]
+            },
+            cereales: {
+                title: "Céréales Maïs doulou kafa",
+                items: [
+                    "10 à 50 sacs de Céréales (Farine/Brisure/Couscous)",
+                    "1 à 5 Tonnes Maïs doulou kafa",
+                    "+5 Tonnes (Grossiste Céréales)"
+                ]
+            },
+            autre: {
+                title: "Autre / Gros Volume Usine",
+                items: [
+                    "Contrat d'Approvisionnement Mensuel Usine",
+                    "Volume spécifique sur Devis Sur-Mesure"
+                ]
+            }
+        };
+
+        function updateDynamicQuantities() {
+            const container = document.getElementById('dynamic-quantites-container');
+            const selectedCheckboxes = document.querySelectorAll('input[name="devis-produits"]:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                container.innerHTML = `<p id="no-product-msg" class="text-slate-400 italic text-[11px]">Veuillez d'abord cocher un ou plusieurs produits ci-dessus pour afficher les options de quantité correspondantes.</p>`;
+                return;
+            }
+
+            let html = '';
+            selectedCheckboxes.forEach(cb => {
+                const key = cb.value;
+                const data = quantityOptionsMap[key];
+                if (data) {
+                    html += `
+                        <div class="mb-3 border-b border-slate-800/80 pb-2.5 last:border-0 last:pb-0">
+                            <span class="text-amber-400 font-cinzel font-bold block text-[10px] uppercase mb-1.5"><i class="fa-solid fa-angle-right mr-1"></i> ${data.title}</span>
+                            <div class="space-y-1.5">
+                                ${data.items.map(item => `
+                                    <label class="flex items-center gap-3 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-amber-500/40 transition">
+                                        <input type="checkbox" name="devis-quantites" value="${data.title}: ${item}" class="w-4 h-4 accent-amber-500">
+                                        <span class="text-slate-200 text-[11px]">${item}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleBurkinaCitiesList() {
+            const chk = document.getElementById('chk-autres-villes-bf');
+            const container = document.getElementById('container-villes-bf');
+            if (chk.checked) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function toggleInternationalExport() {
+            const chk = document.getElementById('chk-export-international');
+            const container = document.getElementById('container-export-monde');
+            if (chk.checked) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function handleDevisSubmit(e) {
+            e.preventDefault();
+            
+            const nom = document.getElementById('devis-nom').value;
+            const tel = document.getElementById('devis-tel').value;
+            const paiement = document.getElementById('devis-paiement').value;
+            const details = document.getElementById('devis-message').value || "Aucune précision particulière.";
+
+            const produitsCheckboxes = document.querySelectorAll('input[name="devis-produits"]:checked');
+            const produitsChoisis = Array.from(produitsCheckboxes).map(cb => {
+                const labelText = cb.closest('label').querySelector('span').textContent;
+                return labelText;
+            });
+
+            if (produitsChoisis.length === 0) {
+                showToast('Veuillez sélectionner au moins un produit concerné.');
+                return;
+            }
+
+            const quantitesCheckboxes = document.querySelectorAll('input[name="devis-quantites"]:checked');
+            const quantitesChoisies = Array.from(quantitesCheckboxes).map(cb => cb.value);
+
+            if (quantitesChoisies.length === 0) {
+                showToast('Veuillez sélectionner au moins une quantité.');
+                return;
+            }
+
+            const villesCheckboxes = document.querySelectorAll('input[name="devis-villes"]:checked');
+            let villesChoisies = Array.from(villesCheckboxes).map(cb => cb.value);
+
+            const chkBf = document.getElementById('chk-autres-villes-bf');
+            if (chkBf && chkBf.checked) {
+                const selectedVilleBf = document.getElementById('select-ville-bf').value;
+                if (selectedVilleBf) {
+                    villesChoisies = villesChoisies.map(v => v === "Autres villes du Burkina Faso" ? `Autres Villes Burkina Faso: ${selectedVilleBf}` : v);
+                }
+            }
+
+            const chkIntl = document.getElementById('chk-export-international');
+            if (chkIntl && chkIntl.checked) {
+                const selectedPays = document.getElementById('select-pays-monde').value;
+                const inputVilleIntl = document.getElementById('input-ville-internationale').value;
+                let exportDetails = "Export International";
+                if (selectedPays) {
+                    exportDetails += ` (Pays: ${selectedPays}`;
+                    if (inputVilleIntl) exportDetails += `, Ville: ${inputVilleIntl}`;
+                    exportDetails += `)`;
+                }
+                villesChoisies = villesChoisies.map(v => v === "Export International" ? exportDetails : v);
+            }
+
+            if (villesChoisies.length === 0) {
+                showToast('Veuillez sélectionner au moins une ville de livraison.');
+                return;
+            }
+
+            const emailTarget = "etabfs@yahoo.fr";
+            const subject = encodeURIComponent(`Demande de Devis Grossiste B2B - ${nom}`);
+            
+            const bodyText = `Bonjour S.T.A.B. SARL,
+
+Voici une nouvelle commande / demande de devis B2B & Vente en Gros :
+
+• Nom / Raison sociale : ${nom}
+• Téléphone / WhatsApp : ${tel}
+
+• Produits Concernés :
+${produitsChoisis.map(p => `  - ${p}`).join('\n')}
+
+• Quantités Souhaitées :
+${quantitesChoisies.map(q => `  - ${q}`).join('\n')}
+
+• Ville(s) & Zone(s) de Livraison :
+${villesChoisies.map(v => `  - ${v}`).join('\n')}
+
+• Mode de Paiement Souhaité : ${paiement}
+
+• Précisions / Remarques :
+${details}
+
+Cordialement,
+${nom}`;
+
+            const encodedSubject = subject;
+            const encodedBody = encodeURIComponent(bodyText);
+            
+            const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailTarget}&su=${encodedSubject}&body=${encodedBody}`;
+            
+            window.open(gmailWebUrl, '_blank');
+
+            setTimeout(() => {
+                window.location.href = `mailto:${emailTarget}?subject=${encodedSubject}&body=${encodedBody}`;
+            }, 500);
+
+            showToast('Ouverture de votre boîte Gmail pour l\'envoi à etabfs@yahoo.fr...');
+            e.target.reset();
+            updateDynamicQuantities();
+            toggleBurkinaCitiesList();
+            toggleInternationalExport();
+        }
+    </script>
+</body>
+</html>
